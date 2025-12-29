@@ -1,4 +1,4 @@
-from flask import jsonify, request
+from flask import jsonify, request, g
 from apiflask import APIBlueprint
 from models import Bracket, SessionLocal
 
@@ -6,15 +6,15 @@ brackets_bp = APIBlueprint('brackets', __name__)
 
 @brackets_bp.before_request
 def create_session():
-    request.db = SessionLocal()
+    g.db = SessionLocal()
 
 @brackets_bp.teardown_request
 def close_session(exception=None):
-    request.db.close()
+    g.db.close()
 
 @brackets_bp.route('/brackets', methods=['GET'])
 def get_brackets():
-    brackets = request.db.query(Bracket).all()
+    brackets = g.db.query(Bracket).all()
     return jsonify([{
         'id': bracket.id,
         'tournament_id': bracket.tournament_id,
@@ -33,10 +33,10 @@ def create_bracket():
     bracket = Bracket(tournament_id=tournament_id, name=name)
 
     try:
-        request.db.add(bracket)
-        request.db.commit()
+        g.db.add(bracket)
+        g.db.commit()
     except Exception as e:
-        request.db.rollback()
+        g.db.rollback()
         return jsonify({'error': str(e)}), 500
 
     return jsonify({
@@ -47,7 +47,7 @@ def create_bracket():
 
 @brackets_bp.route('/brackets/<int:bracket_id>/players', methods=['GET'])
 def get_bracket_players(bracket_id):
-    bracket = request.db.query(Bracket).filter(Bracket.id == bracket_id).first()
+    bracket = g.db.query(Bracket).filter(Bracket.id == bracket_id).first()
 
     if not bracket:
         return jsonify({'error': 'Bracket not found'}), 404

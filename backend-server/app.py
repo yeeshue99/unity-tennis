@@ -12,11 +12,11 @@ app = APIFlask(__name__)
 # Database session
 @app.before_request
 def create_session():
-    request.db = SessionLocal()
+    request.db = SessionLocal() # pyright: ignore[reportAttributeAccessIssue]
 
 @app.teardown_request
 def close_session(exception=None):
-    request.db.close()
+    request.db.close() # pyright: ignore[reportAttributeAccessIssue]
 
 @app.route('/')
 def home():

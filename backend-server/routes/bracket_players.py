@@ -16,10 +16,10 @@ def add_bracket_player():
     bracket_player = BracketPlayer(bracket_id=bracket_id, player_id=player_id)
 
     try:
-        request.db.add(bracket_player)
-        request.db.commit()
+        request.db.add(bracket_player) # pyright: ignore[reportAttributeAccessIssue]
+        request.db.commit() # pyright: ignore[reportAttributeAccessIssue]
     except Exception as e:
-        request.db.rollback()
+        request.db.rollback() # pyright: ignore[reportAttributeAccessIssue]
         return jsonify({'error': str(e)}), 500
 
     return jsonify({
@@ -30,16 +30,16 @@ def add_bracket_player():
 
 @bracket_players_bp.route('/bracket_players/<int:bracket_player_id>', methods=['DELETE'])
 def delete_bracket_player(bracket_player_id):
-    bracket_player = request.db.query(BracketPlayer).filter(BracketPlayer.id == bracket_player_id).first()
+    bracket_player = request.db.query(BracketPlayer).filter(BracketPlayer.id == bracket_player_id).first() # pyright: ignore[reportAttributeAccessIssue]
 
     if not bracket_player:
         return jsonify({'error': 'BracketPlayer not found'}), 404
 
     try:
-        request.db.delete(bracket_player)
-        request.db.commit()
+        request.db.delete(bracket_player) # pyright: ignore[reportAttributeAccessIssue]
+        request.db.commit() # pyright: ignore[reportAttributeAccessIssue]
     except Exception as e:
-        request.db.rollback()
+        request.db.rollback() # pyright: ignore[reportAttributeAccessIssue]
         return jsonify({'error': str(e)}), 500
 
     return jsonify({'message': 'Removed player from bracket successfully'})

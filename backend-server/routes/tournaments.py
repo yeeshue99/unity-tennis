@@ -1,4 +1,4 @@
-from flask import jsonify, request
+from flask import jsonify, request, g
 from apiflask import APIBlueprint
 from models import Tournament, SessionLocal
 
@@ -6,15 +6,15 @@ tournaments_bp = APIBlueprint('tournaments', __name__)
 
 @tournaments_bp.before_request
 def create_session():
-    request.db = SessionLocal()
+    g.db = SessionLocal()
 
 @tournaments_bp.teardown_request
 def close_session(exception=None):
-    request.db.close()
+    g.db.close()
 
 @tournaments_bp.route('/tournaments', methods=['GET'])
 def get_tournaments():
-    tournaments = request.db.query(Tournament).all()
+    tournaments = g.db.query(Tournament).all()
     return jsonify([{
         'id': tournament.id,
         'name': tournament.name,
@@ -34,8 +34,8 @@ def create_tournament():
         format=data['format'],
         status=data['status']
     )
-    request.db.add(new_tournament)
-    request.db.commit()
+    g.db.add(new_tournament)
+    g.db.commit()
     return jsonify({
         'id': new_tournament.id,
         'name': new_tournament.name,
@@ -48,7 +48,7 @@ def create_tournament():
 @tournaments_bp.route('/tournaments/<int:tournament_id>', methods=['PUT'])
 def update_tournament(tournament_id):
     data = request.get_json()
-    tournament = request.db.query(Tournament).filter(Tournament.id == tournament_id).first()
+    tournament = g.db.query(Tournament).filter(Tournament.id == tournament_id).first()
 
     if not tournament:
         return jsonify({'error': 'Tournament not found'}), 404
@@ -59,7 +59,7 @@ def update_tournament(tournament_id):
     tournament.format = data.get('format', tournament.format)
     tournament.status = data.get('status', tournament.status)
 
-    request.db.commit()
+    g.db.commit()
 
     return jsonify({
         'id': tournament.id,

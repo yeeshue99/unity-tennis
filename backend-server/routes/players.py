@@ -1,4 +1,4 @@
-from flask import jsonify, request
+from flask import jsonify, request, g
 from apiflask import APIBlueprint
 from models import Player, SessionLocal
 
@@ -6,15 +6,15 @@ players_bp = APIBlueprint('players', __name__)
 
 @players_bp.before_request
 def create_session():
-    request.db = SessionLocal()
+    g.db = SessionLocal()
 
 @players_bp.teardown_request
 def close_session(exception=None):
-    request.db.close()
+    g.db.close()
 
 @players_bp.route('/players', methods=['GET'])
 def get_players():
-    players = request.db.query(Player).all()
+    players = g.db.query(Player).all()
     return jsonify([{
         'id': player.id,
         'name': player.name,
@@ -35,10 +35,10 @@ def add_player():
     player = Player(name=name, gender=gender, phone_number=phone_number)
 
     try:
-        request.db.add(player)
-        request.db.commit()
+        g.db.add(player)
+        g.db.commit()
     except Exception as e:
-        request.db.rollback()
+        g.db.rollback()
         return jsonify({'error': str(e)}), 500
 
     return jsonify({
@@ -50,16 +50,16 @@ def add_player():
 
 @players_bp.route('/players/<int:player_id>', methods=['DELETE'])
 def remove_player(player_id):
-    player = request.db.query(Player).filter(Player.id == player_id).first()
+    player = g.db.query(Player).filter(Player.id == player_id).first()
 
     if not player:
         return jsonify({'error': 'Player not found'}), 404
 
     try:
-        request.db.delete(player)
-        request.db.commit()
+        g.db.delete(player)
+        g.db.commit()
     except Exception as e:
-        request.db.rollback()
+        g.db.rollback()
         return jsonify({'error': str(e)}), 500
 
     return jsonify({'message': 'Player removed from the registry successfully'})

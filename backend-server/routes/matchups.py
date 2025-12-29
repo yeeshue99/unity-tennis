@@ -1,4 +1,4 @@
-from flask import jsonify, request
+from flask import jsonify, request, g
 from apiflask import APIBlueprint
 from models import Matchup, SessionLocal, Bracket
 
@@ -6,15 +6,15 @@ matchups_bp = APIBlueprint('matchups', __name__)
 
 @matchups_bp.before_request
 def create_session():
-    request.db = SessionLocal()
+    g.db = SessionLocal()
 
 @matchups_bp.teardown_request
 def close_session(exception=None):
-    request.db.close()
+    g.db.close()
 
 @matchups_bp.route('/matchups', methods=['GET'])
 def get_matchups():
-    matchups = request.db.query(Matchup).all()
+    matchups = g.db.query(Matchup).all()
     return jsonify([{
         'id': matchup.id,
         'status': matchup.status,
@@ -23,7 +23,7 @@ def get_matchups():
 
 @matchups_bp.route('/brackets/<int:bracket_id>/matchups', methods=['GET'])
 def get_matchups_by_bracket(bracket_id):
-    matchups = request.db.query(Matchup).filter(Matchup.bracket_id == bracket_id).all()
+    matchups = g.db.query(Matchup).filter(Matchup.bracket_id == bracket_id).all()
 
     if not matchups:
         return jsonify({'error': 'No matchups found for the given bracket'}), 404
@@ -70,10 +70,10 @@ def create_matchup():
     )
 
     try:
-        request.db.add(matchup)
-        request.db.commit()
+        g.db.add(matchup)
+        g.db.commit()
     except Exception as e:
-        request.db.rollback()
+        g.db.rollback()
         return jsonify({'error': str(e)}), 500
 
     return jsonify({
@@ -98,7 +98,7 @@ def generate_matchups():
         return jsonify({'error': 'bracket_id and format are required'}), 400
 
     # Fetch players in the bracket
-    bracket = request.db.query(Bracket).filter(Bracket.id == bracket_id).first()
+    bracket = g.db.query(Bracket).filter(Bracket.id == bracket_id).first()
 
     if not bracket:
         return jsonify({'error': 'Bracket not found'}), 404
@@ -121,10 +121,10 @@ def generate_matchups():
         return jsonify({'error': 'Invalid format'}), 400
 
     try:
-        request.db.bulk_save_objects(matchups)
-        request.db.commit()
+        g.db.bulk_save_objects(matchups)
+        g.db.commit()
     except Exception as e:
-        request.db.rollback()
+        g.db.rollback()
         return jsonify({'error': str(e)}), 500
 
     return jsonify([

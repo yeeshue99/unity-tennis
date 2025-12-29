@@ -1,4 +1,4 @@
-from flask import jsonify, request
+from flask import jsonify, request, g
 from apiflask import APIBlueprint
 from models import TournamentPlayer, SessionLocal
 
@@ -6,15 +6,15 @@ tournament_players_bp = APIBlueprint('tournament_players', __name__)
 
 @tournament_players_bp.before_request
 def create_session():
-    request.db = SessionLocal()
+    g.db = SessionLocal()
 
 @tournament_players_bp.teardown_request
 def close_session(exception=None):
-    request.db.close()
+    g.db.close()
 
 @tournament_players_bp.route('/tournament-players', methods=['GET'])
 def get_tournament_players():
-    tournament_players = request.db.query(TournamentPlayer).all()
+    tournament_players = g.db.query(TournamentPlayer).all()
     return jsonify([{
         'id': tp.id,
         'tournament_id': tp.tournament_id,
@@ -36,10 +36,10 @@ def add_players_to_tournament():
     ]
 
     try:
-        request.db.bulk_save_objects(tournament_players)
-        request.db.commit()
+        g.db.bulk_save_objects(tournament_players)
+        g.db.commit()
     except Exception as e:
-        request.db.rollback()
+        g.db.rollback()
         return jsonify({'error': str(e)}), 500
 
     return jsonify([
@@ -53,7 +53,7 @@ def add_players_to_tournament():
 
 @tournament_players_bp.route('/tournaments/<int:tournament_id>/players', methods=['GET'])
 def get_players_by_tournament(tournament_id):
-    tournament_players = request.db.query(TournamentPlayer).filter(TournamentPlayer.tournament_id == tournament_id).all()
+    tournament_players = g.db.query(TournamentPlayer).filter(TournamentPlayer.tournament_id == tournament_id).all()
 
     if not tournament_players:
         return jsonify({'error': 'No players found for the given tournament'}), 404
@@ -72,7 +72,7 @@ def get_players_by_tournament(tournament_id):
 
 @tournament_players_bp.route('/tournaments/<int:tournament_id>/players/<int:player_id>', methods=['DELETE'])
 def remove_player_from_tournament(tournament_id, player_id):
-    tournament_player = request.db.query(TournamentPlayer).filter(
+    tournament_player = g.db.query(TournamentPlayer).filter(
         TournamentPlayer.tournament_id == tournament_id,
         TournamentPlayer.player_id == player_id
     ).first()
@@ -81,10 +81,10 @@ def remove_player_from_tournament(tournament_id, player_id):
         return jsonify({'error': 'Player not found in the tournament'}), 404
 
     try:
-        request.db.delete(tournament_player)
-        request.db.commit()
+        g.db.delete(tournament_player)
+        g.db.commit()
     except Exception as e:
-        request.db.rollback()
+        g.db.rollback()
         return jsonify({'error': str(e)}), 500
 
     return jsonify({'message': 'Player removed from the tournament successfully'})

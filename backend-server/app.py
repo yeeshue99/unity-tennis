@@ -1,6 +1,6 @@
-from flask import Flask, jsonify, request
+from flask import request
 from flask_cors import CORS
-from models import SessionLocal, Player, Tournament, Matchup, Bracket, TournamentPlayer
+from models import SessionLocal
 from routes.players import players_bp
 from routes.tournaments import tournaments_bp
 from routes.matchups import matchups_bp
@@ -22,7 +22,7 @@ def create_session():
 def close_session(exception=None):
     request.db.close() # pyright: ignore[reportAttributeAccessIssue]
 
-@app.route('/')
+@app.route("/")
 def home():
     return "Welcome to the UniTY Tennis Backend!"
 
@@ -33,5 +33,5 @@ app.register_blueprint(matchups_bp)
 app.register_blueprint(brackets_bp)
 app.register_blueprint(tournament_players_bp)
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     app.run(debug=True)

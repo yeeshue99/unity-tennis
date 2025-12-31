@@ -4,7 +4,7 @@ from apiflask import APIBlueprint
 from pydantic import BaseModel, Field
 from models import Matchup, SessionLocal, Bracket
 
-matchups_bp = APIBlueprint('matchups', __name__)
+matchups_bp = APIBlueprint("matchups", __name__)
 
 @matchups_bp.before_request
 def create_session():
@@ -14,13 +14,13 @@ def create_session():
 def close_session(exception=None):
     g.db.close()
 
-@matchups_bp.route('/matchups', methods=['GET'])
+@matchups_bp.route("/matchups", methods=["GET"])
 def get_matchups():
     matchups = g.db.query(Matchup).all()
     return jsonify([{
-        'id': matchup.id,
-        'status': matchup.status,
-        'score': matchup.score
+        "id": matchup.id,
+        "status": matchup.status,
+        "score": matchup.score
     } for matchup in matchups])
 
 class MatchupSearchQuery(BaseModel):
@@ -30,8 +30,8 @@ class MatchupSearchQuery(BaseModel):
     ALL: Optional[bool] = Field(default=False, description="Return all matchups")
 
 
-@matchups_bp.route('/brackets/<int:bracket_id>/matchups', methods=['GET'])
-@matchups_bp.input(MatchupSearchQuery, location='query')
+@matchups_bp.route("/brackets/<int:bracket_id>/matchups", methods=["GET"])
+@matchups_bp.input(MatchupSearchQuery, location="query")
 def get_matchups_by_bracket(bracket_id, query_data):
     show_pending = query_data.PENDING
     show_planning = query_data.PLANNING
@@ -44,11 +44,11 @@ def get_matchups_by_bracket(bracket_id, query_data):
         status_filters = []
 
         if show_pending:
-            status_filters.append('PENDING')
+            status_filters.append("PENDING")
         if show_planning:
-            status_filters.append('PLANNING')
+            status_filters.append("PLANNING")
         if show_completed:
-            status_filters.append('COMPLETED')
+            status_filters.append("COMPLETED")
 
         smallest_round = g.db.query(Matchup.round).filter(Matchup.bracket_id == bracket_id).order_by(Matchup.round.asc()).first()
         if smallest_round:
@@ -60,63 +60,63 @@ def get_matchups_by_bracket(bracket_id, query_data):
     matchups = query.all()
 
     if not matchups:
-        return jsonify({'error': 'No matchups found for the given bracket'}), 404
+        return jsonify({"error": "No matchups found for the given bracket"}), 404
 
     return jsonify([
         {
-            'id': matchup.id,
-            'bracket_id': matchup.bracket_id,
-            'player1': {
-                'id': matchup.player1.id,
-                'name': matchup.player1.name,
-                'gender': matchup.player1.gender,
-                'phone_number': matchup.player1.phone_number
+            "id": matchup.id,
+            "bracket_id": matchup.bracket_id,
+            "player1": {
+                "id": matchup.player1.id,
+                "name": matchup.player1.name,
+                "gender": matchup.player1.gender,
+                "phone_number": matchup.player1.phone_number
             } if matchup.player1 else None,
-            'player2': {
-                'id': matchup.player2.id,
-                'name': matchup.player2.name,
-                'gender': matchup.player2.gender,
-                'phone_number': matchup.player2.phone_number
+            "player2": {
+                "id": matchup.player2.id,
+                "name": matchup.player2.name,
+                "gender": matchup.player2.gender,
+                "phone_number": matchup.player2.phone_number
             } if matchup.player2 else None,
-            'player1_partner': {
-                'id': matchup.player1_partner.id,
-                'name': matchup.player1_partner.name,
-                'gender': matchup.player1_partner.gender,
-                'phone_number': matchup.player1_partner.phone_number
+            "player1_partner": {
+                "id": matchup.player1_partner.id,
+                "name": matchup.player1_partner.name,
+                "gender": matchup.player1_partner.gender,
+                "phone_number": matchup.player1_partner.phone_number
             } if matchup.player1_partner else None,
-            'player2_partner': {
-                'id': matchup.player2_partner.id,
-                'name': matchup.player2_partner.name,
-                'gender': matchup.player2_partner.gender,
-                'phone_number': matchup.player2_partner.phone_number
+            "player2_partner": {
+                "id": matchup.player2_partner.id,
+                "name": matchup.player2_partner.name,
+                "gender": matchup.player2_partner.gender,
+                "phone_number": matchup.player2_partner.phone_number
             } if matchup.player2_partner else None,
-            'winner': {
-                'id': matchup.winner.id,
-                'name': matchup.winner.name,
-                'gender': matchup.winner.gender,
-                'phone_number': matchup.winner.phone_number
+            "winner": {
+                "id": matchup.winner.id,
+                "name": matchup.winner.name,
+                "gender": matchup.winner.gender,
+                "phone_number": matchup.winner.phone_number
             } if matchup.winner else None,
-            'score': matchup.score,
-            'status': matchup.status,
-            'round': matchup.round
+            "score": matchup.score,
+            "status": matchup.status,
+            "round": matchup.round
         }
         for matchup in matchups
     ])
 
-@matchups_bp.route('/matchups', methods=['POST'])
+@matchups_bp.route("/matchups", methods=["POST"])
 def create_matchup():
     data = request.get_json()
-    bracket_id = data.get('bracket_id')
-    player1_id = data.get('player1_id')
-    player2_id = data.get('player2_id')
-    player1_partner_id = data.get('player1_partner_id')
-    player2_partner_id = data.get('player2_partner_id')
-    winner_id = data.get('winner_id')
-    score = data.get('score')
-    status = data.get('status')
+    bracket_id = data.get("bracket_id")
+    player1_id = data.get("player1_id")
+    player2_id = data.get("player2_id")
+    player1_partner_id = data.get("player1_partner_id")
+    player2_partner_id = data.get("player2_partner_id")
+    winner_id = data.get("winner_id")
+    score = data.get("score")
+    status = data.get("status")
 
     if not bracket_id or not player1_id or not player2_id or not status:
-        return jsonify({'error': 'bracket_id, player1_id, player2_id, and status are required'}), 400
+        return jsonify({"error": "bracket_id, player1_id, player2_id, and status are required"}), 400
 
     matchup = Matchup(
         bracket_id=bracket_id,
@@ -134,39 +134,39 @@ def create_matchup():
         g.db.commit()
     except Exception as e:
         g.db.rollback()
-        return jsonify({'error': str(e)}), 500
+        return jsonify({"error": str(e)}), 500
 
     return jsonify({
-        'id': matchup.id,
-        'bracket_id': matchup.bracket_id,
-        'player1_id': matchup.player1_id,
-        'player2_id': matchup.player2_id,
-        'player1_partner_id': matchup.player1_partner_id,
-        'player2_partner_id': matchup.player2_partner_id,
-        'winner_id': matchup.winner_id,
-        'score': matchup.score,
-        'status': matchup.status
+        "id": matchup.id,
+        "bracket_id": matchup.bracket_id,
+        "player1_id": matchup.player1_id,
+        "player2_id": matchup.player2_id,
+        "player1_partner_id": matchup.player1_partner_id,
+        "player2_partner_id": matchup.player2_partner_id,
+        "winner_id": matchup.winner_id,
+        "score": matchup.score,
+        "status": matchup.status
     }), 201
 
-@matchups_bp.route('/matchups/generate', methods=['POST'])
+@matchups_bp.route("/matchups/generate", methods=["POST"])
 def generate_matchups():
     data = request.get_json()
-    bracket_id = data.get('bracket_id')
-    format = data.get('format')
+    bracket_id = data.get("bracket_id")
+    format = data.get("format")
 
     if not bracket_id or not format:
-        return jsonify({'error': 'bracket_id and format are required'}), 400
+        return jsonify({"error": "bracket_id and format are required"}), 400
 
     # Fetch players in the bracket
     bracket = g.db.query(Bracket).filter(Bracket.id == bracket_id).first()
 
     if not bracket:
-        return jsonify({'error': 'Bracket not found'}), 404
+        return jsonify({"error": "Bracket not found"}), 404
 
     players = [bp.player for bp in bracket.bracket_players]
 
     if not players:
-        return jsonify({'error': 'No players found in the bracket'}), 404
+        return jsonify({"error": "No players found in the bracket"}), 404
 
     # Delete existing matchups for the bracket
     try:
@@ -174,11 +174,11 @@ def generate_matchups():
         g.db.commit()
     except Exception as e:
         g.db.rollback()
-        return jsonify({'error': f"Failed to delete existing matchups: {e}"}), 500
+        return jsonify({"error": f"Failed to delete existing matchups: {e}"}), 500
 
     matchups = []
 
-    if format == 'ROUND_ROBIN':
+    if format == "ROUND_ROBIN":
         num_players = len(players)
         if num_players % 2 != 0:
             players.append(None)  # Add a dummy player for odd number of players
@@ -197,69 +197,69 @@ def generate_matchups():
                             player1_id=player1.id,
                             player2_id=player2.id,
                             round=round_num + 1,
-                            status='PENDING'
+                            status="PENDING"
                         )
                     )
 
             # Rotate players for the next round
-            players = [players[0]] + [players[-1]] + players[1:-1]
+            players = [players[0], players[-1], *players[1:-1]]
             matchups.extend(round_matches)
-    elif format == 'SWISS':
+    elif format == "SWISS":
         # Placeholder for SWISS format logic
-        return jsonify({'error': 'SWISS format not implemented yet'}), 501
+        return jsonify({"error": "SWISS format not implemented yet"}), 501
     else:
-        return jsonify({'error': 'Invalid format'}), 400
+        return jsonify({"error": "Invalid format"}), 400
 
     try:
         g.db.bulk_save_objects(matchups)
         g.db.commit()
     except Exception as e:
         g.db.rollback()
-        return jsonify({'error': str(e)}), 500
+        return jsonify({"error": str(e)}), 500
 
     return jsonify([
         {
-            'id': matchup.id,
-            'bracket_id': matchup.bracket_id,
-            'player1_id': matchup.player1_id,
-            'player2_id': matchup.player2_id,
-            'status': matchup.status
+            "id": matchup.id,
+            "bracket_id": matchup.bracket_id,
+            "player1_id": matchup.player1_id,
+            "player2_id": matchup.player2_id,
+            "status": matchup.status
         }
         for matchup in matchups
     ]), 201
 
-@matchups_bp.route('/matchups/<int:matchup_id>', methods=['PUT'])
+@matchups_bp.route("/matchups/<int:matchup_id>", methods=["PUT"])
 def update_matchup(matchup_id):
     data = request.get_json()
     
     matchup = g.db.query(Matchup).filter(Matchup.id == matchup_id).first()
 
     if not matchup:
-        return jsonify({'error': 'Matchup not found'}), 404
+        return jsonify({"error": "Matchup not found"}), 404
 
     # Update fields if provided in the request
-    matchup.player1_id = data.get('player1_id', matchup.player1_id)
-    matchup.player2_id = data.get('player2_id', matchup.player2_id)
-    matchup.player1_partner_id = data.get('player1_partner_id', matchup.player1_partner_id)
-    matchup.player2_partner_id = data.get('player2_partner_id', matchup.player2_partner_id)
-    matchup.winner_id = data.get('winner_id', matchup.winner_id)
-    matchup.score = data.get('score', matchup.score)
-    matchup.status = data.get('status', matchup.status)
+    matchup.player1_id = data.get("player1_id", matchup.player1_id)
+    matchup.player2_id = data.get("player2_id", matchup.player2_id)
+    matchup.player1_partner_id = data.get("player1_partner_id", matchup.player1_partner_id)
+    matchup.player2_partner_id = data.get("player2_partner_id", matchup.player2_partner_id)
+    matchup.winner_id = data.get("winner_id", matchup.winner_id)
+    matchup.score = data.get("score", matchup.score)
+    matchup.status = data.get("status", matchup.status)
 
     try:
         g.db.commit()
     except Exception as e:
         g.db.rollback()
-        return jsonify({'error': str(e)}), 500
+        return jsonify({"error": str(e)}), 500
 
     return jsonify({
-        'id': matchup.id,
-        'bracket_id': matchup.bracket_id,
-        'player1_id': matchup.player1_id,
-        'player2_id': matchup.player2_id,
-        'player1_partner_id': matchup.player1_partner_id,
-        'player2_partner_id': matchup.player2_partner_id,
-        'winner_id': matchup.winner_id,
-        'score': matchup.score,
-        'status': matchup.status
+        "id": matchup.id,
+        "bracket_id": matchup.bracket_id,
+        "player1_id": matchup.player1_id,
+        "player2_id": matchup.player2_id,
+        "player1_partner_id": matchup.player1_partner_id,
+        "player2_partner_id": matchup.player2_partner_id,
+        "winner_id": matchup.winner_id,
+        "score": matchup.score,
+        "status": matchup.status
     }), 200

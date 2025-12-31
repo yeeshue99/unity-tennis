@@ -1,9 +1,8 @@
 from sqlalchemy import Column, Integer, String, ForeignKey, create_engine
 from sqlalchemy.orm import relationship, sessionmaker, DeclarativeBase
 from dotenv import load_dotenv
-from enum import Enum
 from typing import Optional
-from pydantic import BaseModel, Field
+from pydantic import BaseModel
 import os
 
 load_dotenv()
@@ -17,10 +16,10 @@ class Base(DeclarativeBase):
     pass
 
 class Bracket(Base):
-    __tablename__ = 'bracket'
+    __tablename__ = "bracket"
 
     id = Column(Integer, primary_key=True, autoincrement=True)
-    tournament_id = Column(Integer, ForeignKey('tournament.id'), nullable=False)
+    tournament_id = Column(Integer, ForeignKey("tournament.id"), nullable=False)
     name = Column(String(50), nullable=False)
 
     # Relationships
@@ -32,15 +31,15 @@ class Bracket(Base):
         return f"<Bracket(id={self.id}, name='{self.name}')>"
 
 class Matchup(Base):
-    __tablename__ = 'matchup'
+    __tablename__ = "matchup"
 
     id = Column(Integer, primary_key=True, autoincrement=True)
-    bracket_id = Column(Integer, ForeignKey('bracket.id'), nullable=False)
-    player1_id = Column(Integer, ForeignKey('player.id'))
-    player2_id = Column(Integer, ForeignKey('player.id'))
-    player1_partner_id = Column(Integer, ForeignKey('player.id'))
-    player2_partner_id = Column(Integer, ForeignKey('player.id'))
-    winner_id = Column(Integer, ForeignKey('player.id'))
+    bracket_id = Column(Integer, ForeignKey("bracket.id"), nullable=False)
+    player1_id = Column(Integer, ForeignKey("player.id"))
+    player2_id = Column(Integer, ForeignKey("player.id"))
+    player1_partner_id = Column(Integer, ForeignKey("player.id"))
+    player2_partner_id = Column(Integer, ForeignKey("player.id"))
+    winner_id = Column(Integer, ForeignKey("player.id"))
     round = Column(Integer, nullable=True)
     score = Column(String(50))
     status = Column(String(20), nullable=False)
@@ -57,7 +56,7 @@ class Matchup(Base):
         return f"<Matchup(id={self.id}, status='{self.status}')>"
 
 class Player(Base):
-    __tablename__ = 'player'
+    __tablename__ = "player"
 
     id = Column(Integer, primary_key=True, autoincrement=True)
     name = Column(String(80), nullable=False)
@@ -73,7 +72,7 @@ class Player(Base):
         return f"<Player(id={self.id}, name='{self.name}')>"
 
 class Tournament(Base):
-    __tablename__ = 'tournament'
+    __tablename__ = "tournament"
 
     id = Column(Integer, primary_key=True, autoincrement=True)
     name = Column(String(100), nullable=False)
@@ -90,11 +89,11 @@ class Tournament(Base):
         return f"<Tournament(id={self.id}, name='{self.name}')>"
 
 class TournamentPlayer(Base):
-    __tablename__ = 'tournament_player'
+    __tablename__ = "tournament_player"
 
     id = Column(Integer, primary_key=True, autoincrement=True)
-    tournament_id = Column(Integer, ForeignKey('tournament.id'), nullable=False)
-    player_id = Column(Integer, ForeignKey('player.id'), nullable=False)
+    tournament_id = Column(Integer, ForeignKey("tournament.id"), nullable=False)
+    player_id = Column(Integer, ForeignKey("player.id"), nullable=False)
 
     # Relationships
     tournament = relationship("Tournament", back_populates="tournament_players")
@@ -104,11 +103,11 @@ class TournamentPlayer(Base):
         return f"<TournamentPlayer(id={self.id}, tournament_id={self.tournament_id}, player_id={self.player_id})>"
 
 class BracketPlayer(Base):
-    __tablename__ = 'bracket_player'
+    __tablename__ = "bracket_player"
 
     id = Column(Integer, primary_key=True, autoincrement=True)
-    bracket_id = Column(Integer, ForeignKey('bracket.id'), nullable=False)
-    player_id = Column(Integer, ForeignKey('player.id'), nullable=False)
+    bracket_id = Column(Integer, ForeignKey("bracket.id"), nullable=False)
+    player_id = Column(Integer, ForeignKey("player.id"), nullable=False)
 
     # Relationships
     bracket = relationship("Bracket", back_populates="bracket_players")

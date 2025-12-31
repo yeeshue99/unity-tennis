@@ -35,6 +35,8 @@ interface Matchup {
   score: string | null; // Added score property
 }
 
+const API_BASE_URL = process.env.REACT_APP_API_BASE_URL || "http://localhost:5000";
+
 const BracketMatchups: React.FC<BracketMatchupsProps> = ({ bracketId }) => {
   const queryClient = useQueryClient();
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -51,9 +53,7 @@ const BracketMatchups: React.FC<BracketMatchupsProps> = ({ bracketId }) => {
         throw new Error("Invalid bracket ID");
       }
 
-      const response = await fetch(
-        `http://localhost:5000/brackets/${bracketId}/matchups`
-      );
+      const response = await fetch(`${API_BASE_URL}/brackets/${bracketId}/matchups`);
       if (!response.ok) {
         throw new Error("Failed to fetch matchups");
       }
@@ -71,7 +71,7 @@ const BracketMatchups: React.FC<BracketMatchupsProps> = ({ bracketId }) => {
         throw new Error("Invalid bracket ID");
       }
 
-      const response = await fetch(`http://localhost:5000/matchups/generate`, {
+      const response = await fetch(`${API_BASE_URL}/matchups/generate`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -95,7 +95,7 @@ const BracketMatchups: React.FC<BracketMatchupsProps> = ({ bracketId }) => {
   >({
     mutationFn: async ({ matchupId, score, status }) => {
       const response = await fetch(
-        `http://localhost:5000/matchups/${matchupId}`,
+        `${API_BASE_URL}/matchups/${matchupId}`,
         {
           method: "PUT",
           headers: {
@@ -121,7 +121,7 @@ const BracketMatchups: React.FC<BracketMatchupsProps> = ({ bracketId }) => {
   >({
     mutationFn: async ({ matchupId, winnerId }) => {
       const response = await fetch(
-        `http://localhost:5000/matchups/${matchupId}`,
+        `${API_BASE_URL}/matchups/${matchupId}`,
         {
           method: "PUT",
           headers: {

@@ -20,6 +20,8 @@ interface Bracket {
   name: string;
 }
 
+const API_BASE_URL = process.env.REACT_APP_API_BASE_URL || "http://localhost:5000";
+
 const BracketDropdown: React.FC<BracketDropdownProps> = ({
   selectedTournament,
   selectedBracket,
@@ -35,7 +37,7 @@ const BracketDropdown: React.FC<BracketDropdownProps> = ({
     queryFn: async () => {
       if (!selectedTournament) return [];
       const response = await fetch(
-        `http://localhost:5000/tournaments/${selectedTournament}/brackets`
+        `${API_BASE_URL}/tournaments/${selectedTournament}/brackets`
       );
       if (!response.ok) {
         throw new Error("Network response was not ok");

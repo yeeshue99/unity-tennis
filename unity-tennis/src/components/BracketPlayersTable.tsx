@@ -18,6 +18,8 @@ interface BracketPlayersTableProps {
   bracketId: number | null;
 }
 
+const API_BASE_URL = process.env.REACT_APP_API_BASE_URL || 'http://localhost:5000';
+
 const BracketPlayersTable: React.FC<BracketPlayersTableProps> = ({ bracketId }) => {
   const queryClient = useQueryClient();
 
@@ -27,7 +29,7 @@ const BracketPlayersTable: React.FC<BracketPlayersTableProps> = ({ bracketId }) 
       queryFn: async () => {
         if (!bracketId) return [];
         
-        const response = await fetch(`http://localhost:5000/brackets/${bracketId}/players`);
+        const response = await fetch(`${API_BASE_URL}/brackets/${bracketId}/players`);
         if (!response.ok) {
           throw new Error('Failed to fetch players in bracket');
         }
@@ -41,7 +43,7 @@ const BracketPlayersTable: React.FC<BracketPlayersTableProps> = ({ bracketId }) 
     {
       queryKey: ['allPlayers'],
       queryFn: async () => {
-        const response = await fetch('http://localhost:5000/players');
+        const response = await fetch(`${API_BASE_URL}/players`);
         if (!response.ok) {
           throw new Error('Failed to fetch all players');
         }
@@ -54,7 +56,7 @@ const BracketPlayersTable: React.FC<BracketPlayersTableProps> = ({ bracketId }) 
 
   const addPlayerMutation = useMutation<void, Error, { playerId: number }>({
     mutationFn: async ({ playerId }: { playerId: number }) => {
-      const response = await fetch(`http://localhost:5000/brackets/${bracketId}/players`, {
+      const response = await fetch(`${API_BASE_URL}/brackets/${bracketId}/players`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

@@ -1,6 +1,11 @@
 import { Container, Typography } from '@mui/material';
+import { createFileRoute } from '@tanstack/react-router';
 
-function Landing() {
+export const Route = createFileRoute("/")({
+  component: index,
+})
+
+function index() {
   return (
     <>
       <Container style={{ padding: '5rem 2rem', textAlign: 'center' }}>
@@ -15,4 +20,5 @@ function Landing() {
   );
 }
 
-export default Landing;
+// eslint-disable-next-line react-refresh/only-export-components
+export default index;

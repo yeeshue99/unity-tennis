@@ -14,7 +14,7 @@ def close_session(exception=None):
 
 @tournaments_bp.route('/tournaments', methods=['GET'])
 def get_tournaments():
-    tournaments = g.db.query(Tournament).all()
+    tournaments = g.db.query(Tournament).filter(Tournament.status.in_(['PLANNING', 'IN_PROGRESS'])).all()
     return jsonify([{
         'id': tournament.id,
         'name': tournament.name,

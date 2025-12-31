@@ -3,12 +3,12 @@ import { AppBar, Toolbar, Typography, IconButton, Drawer, List, ListItem, ListIt
 import MenuIcon from '@mui/icons-material/Menu';
 import HomeIcon from '@mui/icons-material/Home';
 import ArrowBack from '@mui/icons-material/ArrowBack';
-import { Link as RouterLink } from 'react-router-dom';
+import { Link as RouterLink } from '@tanstack/react-router';
 
 function Header() {
   const [drawerOpen, setDrawerOpen] = useState(false);
 
-  return (
+  return ( 
     <AppBar position="fixed" style={{ backgroundColor: '#4CAF50', width: '100%' }}>
       <Toolbar>
         <IconButton edge="start" color="inherit" aria-label="home" component={RouterLink} to="/">
@@ -49,7 +49,7 @@ function Header() {
             </ListItemButton>
           </ListItem>
           <ListItem disablePadding>
-            <ListItemButton component={RouterLink} to="/local-leagues" onClick={() => setDrawerOpen(false)}>
+            <ListItemButton component={RouterLink} to="/tournaments" onClick={() => setDrawerOpen(false)}>
               <ListItemText primary="Local Leagues" />
             </ListItemButton>
           </ListItem>

@@ -1,4 +1,5 @@
 from flask import Flask, jsonify, request
+from flask_cors import CORS
 from models import SessionLocal, Player, Tournament, Matchup, Bracket, TournamentPlayer
 from routes.players import players_bp
 from routes.tournaments import tournaments_bp
@@ -8,6 +9,9 @@ from routes.tournament_players import tournament_players_bp
 from apiflask import APIFlask
 
 app = APIFlask(__name__)
+
+# Enable CORS
+CORS(app)
 
 # Database session
 @app.before_request

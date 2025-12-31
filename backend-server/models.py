@@ -41,6 +41,7 @@ class Matchup(Base):
     player1_partner_id = Column(Integer, ForeignKey('player.id'))
     player2_partner_id = Column(Integer, ForeignKey('player.id'))
     winner_id = Column(Integer, ForeignKey('player.id'))
+    round = Column(Integer, nullable=True)
     score = Column(String(50))
     status = Column(String(20), nullable=False)
 

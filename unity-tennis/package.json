@@ -7,7 +7,8 @@
     "dev": "vite",
     "build": "tsc -b && vite build",
     "lint": "eslint .",
-    "preview": "vite preview"
+    "preview": "vite preview",
+    "generate:routes": "tsr generate"
   },
   "dependencies": {
     "@emotion/react": "^11.14.0",
@@ -15,12 +16,21 @@
     "@fontsource/roboto": "^5.2.9",
     "@mui/icons-material": "^7.3.6",
     "@mui/material": "^7.3.6",
+    "@mui/x-data-grid": "^8.23.0",
+    "@tanstack/react-query": "^5.90.14",
+    "@tanstack/react-router": "^1.144.0",
+    "add": "^2.0.6",
+    "pnpm": "^10.26.2",
     "react": "^19.2.0",
     "react-dom": "^19.2.0",
     "react-router-dom": "^7.11.0"
   },
   "devDependencies": {
     "@eslint/js": "^9.39.1",
+    "@tanstack/eslint-plugin-query": "^5.91.2",
+    "@tanstack/react-router-devtools": "^1.144.0",
+    "@tanstack/router-cli": "^1.144.0",
+    "@tanstack/router-plugin": "^1.144.0",
     "@types/node": "^24.10.1",
     "@types/react": "^19.2.5",
     "@types/react-dom": "^19.2.3",

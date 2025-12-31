@@ -13,7 +13,7 @@ interface TournamentDropdownProps {
   onTournamentChange: (tournamentId: number | null) => void;
 }
 
-const API_BASE_URL = process.env.REACT_APP_API_BASE_URL || 'http://localhost:5000';
+const API_BASE_URL = import.meta.env.REACT_APP_API_BASE_URL || 'http://localhost:5000';
 
 const TournamentDropdown: React.FC<TournamentDropdownProps> = ({ selectedTournament, onTournamentChange }) => {
   const { data: tournaments = [], isLoading, isError } = useQuery<Tournament[], Error>({

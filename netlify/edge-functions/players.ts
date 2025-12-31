@@ -1,16 +1,27 @@
 // Updated Netlify Edge Function for players routes
-import { connectToDatabase } from "../utils/db";
+import supabase from "../util/db.ts";
 
-export default async function handler(req, context) {
+export default async function handler(req: Request): Promise<Response> {
   const { method } = req;
-  const db = await connectToDatabase();
 
   if (method === "GET") {
-    const players = await db.query("SELECT * FROM players");
-    return new Response(JSON.stringify(players), {
-      status: 200,
-      headers: { "Content-Type": "application/json" },
-    });
+    try {
+      const { data: players, error } = await supabase.from("players").select();
+
+      if (error) {
+        throw error;
+      }
+
+      return new Response(JSON.stringify(players), {
+        status: 200,
+        headers: { "Content-Type": "application/json" },
+      });
+    } catch {
+      return new Response(JSON.stringify({ error: "Failed to fetch players" }), {
+        status: 500,
+        headers: { "Content-Type": "application/json" },
+      });
+    }
   }
 
   if (method === "POST") {
@@ -25,10 +36,14 @@ export default async function handler(req, context) {
     }
 
     try {
-      await db.query(
-        "INSERT INTO players (name, gender, phone_number) VALUES (?, ?, ?)",
-        [name, gender, phone_number]
-      );
+      const { error } = await supabase
+        .from("players")
+        .insert({ name, gender, phone_number });
+
+      if (error) {
+        throw error;
+      }
+
       return new Response(
         JSON.stringify({ message: "Player added successfully" }),
         {
@@ -36,7 +51,7 @@ export default async function handler(req, context) {
           headers: { "Content-Type": "application/json" },
         }
       );
-    } catch (error) {
+    } catch {
       return new Response(JSON.stringify({ error: "Failed to add player" }), {
         status: 500,
         headers: { "Content-Type": "application/json" },
@@ -51,5 +66,5 @@ export default async function handler(req, context) {
 }
 
 export const config = {
-  path: ["/players"],
+  path: "/players",
 };

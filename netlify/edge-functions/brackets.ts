@@ -1,16 +1,27 @@
 // Updated Netlify Edge Function for brackets routes
-import { connectToDatabase } from "../utils/db";
+import supabase from "../util/db.ts";
 
-export default async function handler(req, context) {
+export default async function handler(req: Request): Promise<Response> {
   const { method } = req;
-  const db = await connectToDatabase();
 
   if (method === "GET") {
-    const brackets = await db.query("SELECT * FROM brackets");
-    return new Response(JSON.stringify(brackets), {
-      status: 200,
-      headers: { "Content-Type": "application/json" },
-    });
+    try {
+      const { data: brackets, error } = await supabase.from("brackets").select();
+
+      if (error) {
+        throw error;
+      }
+
+      return new Response(JSON.stringify(brackets), {
+        status: 200,
+        headers: { "Content-Type": "application/json" },
+      });
+    } catch {
+      return new Response(JSON.stringify({ error: "Failed to fetch brackets" }), {
+        status: 500,
+        headers: { "Content-Type": "application/json" },
+      });
+    }
   }
 
   if (method === "POST") {
@@ -25,18 +36,22 @@ export default async function handler(req, context) {
     }
 
     try {
-      const result = await db.query(
-        "INSERT INTO brackets (tournament_id, name) VALUES (?, ?)",
-        [tournament_id, name]
-      );
+      const { error } = await supabase
+        .from("brackets")
+        .insert({ tournament_id, name });
+
+      if (error) {
+        throw error;
+      }
+
       return new Response(
-        JSON.stringify({ id: result.insertId, message: "Bracket created successfully" }),
+        JSON.stringify({ message: "Bracket created successfully" }),
         {
           status: 201,
           headers: { "Content-Type": "application/json" },
         }
       );
-    } catch (error) {
+    } catch {
       return new Response(JSON.stringify({ error: "Failed to create bracket" }), {
         status: 500,
         headers: { "Content-Type": "application/json" },

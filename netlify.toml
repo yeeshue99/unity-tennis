@@ -2,11 +2,4 @@
   edge_functions = "netlify/edge-functions"
 
 [dev]
-    edge_functions = "netlify/edge-functions"
-    framework = "vite"
-    command = "npm run dev"
-    targetPort = 8080
-
-[[edge_functions]]
-  path = "/admin"
-  function = "auth"
+  edge_functions = "netlify/edge-functions"

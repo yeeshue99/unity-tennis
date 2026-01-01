@@ -6,7 +6,7 @@ export default async function handler(req: Request): Promise<Response> {
 
   if (method === "GET") {
     try {
-      const { data: players, error } = await supabase.from("public.players").select();
+      const { data: players, error } = await supabase.from("players").select();
 
       if (error) {
         throw error;

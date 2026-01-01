@@ -6,7 +6,7 @@ export default async function handler(req: Request): Promise<Response> {
 
   if (method === "GET" && new URL(url).pathname === "/api/matchups") {
     try {
-      const { data: matchups, error } = await supabase.from("public.matchups").select();
+      const { data: matchups, error } = await supabase.from("matchups").select();
 
       if (error) {
         throw error;
@@ -32,7 +32,7 @@ export default async function handler(req: Request): Promise<Response> {
     const COMPLETED = params.get("COMPLETED");
     const ALL = params.get("ALL");
 
-    let query = supabase.from("public.matchups").select().eq("bracket_id", bracketId);
+    let query = supabase.from("matchups").select().eq("bracket_id", bracketId);
 
     if (!ALL) {
       const conditions: string[] = [];

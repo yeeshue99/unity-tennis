@@ -6,7 +6,7 @@ export default async function handler(req: Request): Promise<Response> {
 
   if (method === "GET") {
     try {
-      const { data: brackets, error } = await supabase.from("public.brackets").select();
+      const { data: brackets, error } = await supabase.from("brackets").select();
 
       if (error) {
         throw error;
@@ -37,7 +37,7 @@ export default async function handler(req: Request): Promise<Response> {
 
     try {
       const { error } = await supabase
-        .from("public.brackets")
+        .from("brackets")
         .insert({ tournament_id, name });
 
       if (error) {

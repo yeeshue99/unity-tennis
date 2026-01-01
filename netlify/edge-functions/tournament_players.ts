@@ -6,7 +6,7 @@ export default async function handler(req: Request): Promise<Response> {
 
   if (method === "GET" && new URL(req.url).pathname === "/api/tournament-players") {
     try {
-      const { data: tournamentPlayers, error } = await supabase.from("public.tournament_players").select();
+      const { data: tournamentPlayers, error } = await supabase.from("tournament_players").select();
 
       if (error) {
         throw error;
@@ -36,7 +36,7 @@ export default async function handler(req: Request): Promise<Response> {
     }
 
     try {
-      const { error } = await supabase.from("public.tournament_players").insert(
+      const { error } = await supabase.from("tournament_players").insert(
         player_ids.map((player_id: number) => ({ tournament_id, player_id }))
       );
 

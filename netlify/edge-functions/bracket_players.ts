@@ -18,7 +18,7 @@ export default async function handler(req: Request): Promise<Response> {
 
     try {
       const { error } = await supabase
-        .from("public.bracket_players")
+        .from("bracket_players")
         .insert({ bracket_id, player_id });
 
       if (error) {
@@ -55,7 +55,7 @@ export default async function handler(req: Request): Promise<Response> {
 
     try {
       const { error } = await supabase
-        .from("public.bracket_players")
+        .from("bracket_players")
         .delete()
         .match({ bracket_id, player_id });
 

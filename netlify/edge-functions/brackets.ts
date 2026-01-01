@@ -16,8 +16,8 @@ export default async function handler(req: Request): Promise<Response> {
         status: 200,
         headers: { "Content-Type": "application/json" },
       });
-    } catch {
-      return new Response(JSON.stringify({ error: "Failed to fetch brackets" }), {
+    } catch (error) {
+      return new Response(JSON.stringify({ message: "Failed to fetch brackets", error }), {
         status: 500,
         headers: { "Content-Type": "application/json" },
       });

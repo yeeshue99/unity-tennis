@@ -5,7 +5,7 @@ import type { Config } from "@netlify/edge-functions";
 export default async function handler(req: Request): Promise<Response> {
   const { method, url } = req;
 
-  if (method === "POST" && new URL(url).pathname === "/bracket_players") {
+  if (method === "POST" && new URL(url).pathname === "/api/bracket_players") {
     const data = await req.json();
     const { bracket_id, player_id } = data;
 
@@ -18,7 +18,7 @@ export default async function handler(req: Request): Promise<Response> {
 
     try {
       const { error } = await supabase
-        .from("bracket_players")
+        .from("public.bracket_players")
         .insert({ bracket_id, player_id });
 
       if (error) {
@@ -42,7 +42,7 @@ export default async function handler(req: Request): Promise<Response> {
     }
   }
 
-  if (method === "DELETE" && new URL(url).pathname === "/bracket_players") {
+  if (method === "DELETE" && new URL(url).pathname === "/api/bracket_players") {
     const data = await req.json();
     const { bracket_id, player_id } = data;
 
@@ -55,7 +55,7 @@ export default async function handler(req: Request): Promise<Response> {
 
     try {
       const { error } = await supabase
-        .from("bracket_players")
+        .from("public.bracket_players")
         .delete()
         .match({ bracket_id, player_id });
 

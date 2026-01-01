@@ -8,7 +8,7 @@ export default async function handler(req: Request): Promise<Response> {
   if (method === "GET") {
     try {
       const { data: tournaments, error } = await supabase
-        .from("tournaments")
+        .from("public.tournaments")
         .select()
         .in("status", ["PLANNING", "IN_PROGRESS"]);
 
@@ -34,7 +34,7 @@ export default async function handler(req: Request): Promise<Response> {
 
     try {
       const { error } = await supabase
-        .from("tournaments")
+        .from("public.tournaments")
         .insert({ name, start_date, end_date, format, status });
 
       if (error) {

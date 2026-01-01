@@ -4,9 +4,9 @@ import supabase from "../util/db.ts";
 export default async function handler(req: Request): Promise<Response> {
   const { method, url } = req;
 
-  if (method === "GET" && new URL(url).pathname === "/matchups") {
+  if (method === "GET" && new URL(url).pathname === "/api/matchups") {
     try {
-      const { data: matchups, error } = await supabase.from("matchups").select();
+      const { data: matchups, error } = await supabase.from("public.matchups").select();
 
       if (error) {
         throw error;
@@ -24,15 +24,15 @@ export default async function handler(req: Request): Promise<Response> {
     }
   }
 
-  if (method === "GET" && new URL(url).pathname.startsWith("/brackets/")) {
-    const bracketId = new URL(req.url).pathname.split("/")[2];
+  if (method === "GET" && new URL(url).pathname.startsWith("/api/brackets/")) {
+    const bracketId = new URL(req.url).pathname.split("/")[3];
     const params = new URLSearchParams(new URL(req.url).search);
     const PENDING = params.get("PENDING");
     const PLANNING = params.get("PLANNING");
     const COMPLETED = params.get("COMPLETED");
     const ALL = params.get("ALL");
 
-    let query = supabase.from("matchups").select().eq("bracket_id", bracketId);
+    let query = supabase.from("public.matchups").select().eq("bracket_id", bracketId);
 
     if (!ALL) {
       const conditions: string[] = [];

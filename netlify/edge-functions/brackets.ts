@@ -66,5 +66,5 @@ export default async function handler(req: Request): Promise<Response> {
 }
 
 export const config = {
-  path: ["/brackets"],
+  path: ["/api/brackets"],
 };

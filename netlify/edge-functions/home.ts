@@ -7,5 +7,5 @@ export default async function handler(): Promise<Response> {
 }
 
 export const config = {
-  path: ["/"],
+  path: ["/api/"],
 };

@@ -1,6 +1,5 @@
 // Updated Netlify Edge Function for managing bracket players
 import supabase from "../util/db.ts";
-import headers from "../util/headers.ts";
 import type { Config } from "@netlify/edge-functions";
 
 export default async function handler(req: Request): Promise<Response> {
@@ -86,5 +85,5 @@ export default async function handler(req: Request): Promise<Response> {
 }
 
 export const config: Config = {
-  path: "/bracket_players",
+  path: "/api/bracket_players",
 };

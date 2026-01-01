@@ -71,5 +71,5 @@ export default async function handler(req: Request): Promise<Response> {
 }
 
 export const config = {
-  path: ["/matchups", "/brackets/:id/matchups"],
+  path: ["/api/matchups", "/api/brackets/:id/matchups"],
 };

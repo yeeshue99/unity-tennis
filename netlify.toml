@@ -1,5 +1,0 @@
-[build]
-  edge_functions = "netlify/edge-functions"
-
-[dev]
-  edge_functions = "netlify/edge-functions"

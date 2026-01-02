@@ -35,7 +35,7 @@ interface Matchup {
   score: string | null; // Added score property
 }
 
-const API_BASE_URL = import.meta.env.REACT_APP_API_BASE_URL || "https://unity-tennis.netlify.app/api";
+const API_BASE_URL = import.meta.env.VITE_APP_API_BASE_URL || "https://unity-tennis-api.netlify.app";
 
 const BracketMatchups: React.FC<BracketMatchupsProps> = ({ bracketId }) => {
   const queryClient = useQueryClient();

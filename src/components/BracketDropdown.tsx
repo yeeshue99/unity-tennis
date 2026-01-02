@@ -20,7 +20,7 @@ interface Bracket {
   name: string;
 }
 
-const API_BASE_URL = import.meta.env.REACT_APP_API_BASE_URL || "https://unity-tennis.netlify.app/api";
+const API_BASE_URL = import.meta.env.VITE_APP_API_BASE_URL || "https://unity-tennis-api.netlify.apphttps://unity-tennis-api.netlify.app";
 
 const BracketDropdown: React.FC<BracketDropdownProps> = ({
   selectedTournament,

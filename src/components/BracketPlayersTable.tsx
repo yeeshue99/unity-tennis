@@ -18,7 +18,7 @@ interface BracketPlayersTableProps {
   bracketId: number | null;
 }
 
-const API_BASE_URL = import.meta.env.VITE_APP_API_BASE_URL || 'https://unity-tennis-api.netlify.app';
+const API_BASE_URL = import.meta.env.VITE_APP_API_BASE_URL;
 
 const BracketPlayersTable: React.FC<BracketPlayersTableProps> = ({ bracketId }) => {
   const queryClient = useQueryClient();

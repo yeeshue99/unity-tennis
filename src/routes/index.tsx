@@ -1,5 +1,5 @@
-import { Container, Typography } from '@mui/material';
-import { createFileRoute } from '@tanstack/react-router';
+import { Button, Container, Typography } from '@mui/material';
+import { createFileRoute, Link } from '@tanstack/react-router';
 
 export const Route = createFileRoute("/")({
   component: index,
@@ -10,11 +10,17 @@ function index() {
     <>
       <Container style={{ padding: '5rem 2rem', textAlign: 'center' }}>
         <Typography variant="h5" gutterBottom>
-          Looking to improve your tennis skills? You've come to the right place!
+          Looking to improve your tennis skills or get involved in your local tennis community? You've come to the right place!
         </Typography>
-        <Typography variant="body1">
-          Our experienced coaches are here to help you master the game, whether you're a beginner or an advanced player.
-        </Typography>
+        <Button 
+          variant="contained" 
+          color="primary" 
+          component={Link}
+          to="/tournaments"
+          style={{ marginTop: '1rem' }}
+        >
+          View Tournaments
+        </Button>
       </Container>
     </>
   );

@@ -18,12 +18,14 @@ import {
   Table,
   X,
 } from 'lucide-react'
+import { SignedIn, useUser } from '@clerk/clerk-react'
 
 export default function Header() {
   const [isOpen, setIsOpen] = useState(false)
   const [groupedExpanded, setGroupedExpanded] = useState<
     Record<string, boolean>
   >({})
+  const { isSignedIn, user } = useUser()
 
   return (
     <>
@@ -35,15 +37,12 @@ export default function Header() {
         >
           <Menu size={24} />
         </button>
-        <h1 className="ml-4 text-xl font-semibold">
-          <Link to="/">
-            <img
-              src="/tanstack-word-logo-white.svg"
-              alt="TanStack Logo"
-              className="h-10"
-            />
-          </Link>
+        <h1 className="ml-4 text-xl font-semibold flex-1">
+          <Link to="/">UniTY Tennis</Link>
         </h1>
+        <div className="p-4 border-t border-gray-700 bg-gray-600 flex flex-row gap-2 border rounded-lg">
+          <ClerkHeader />
+        </div>
       </header>
 
       <aside
@@ -76,9 +75,37 @@ export default function Header() {
             <span className="font-medium">Home</span>
           </Link>
 
+          <Link
+            to="/tournaments"
+            onClick={() => setIsOpen(false)}
+            className="flex items-center gap-3 p-3 rounded-lg hover:bg-gray-800 transition-colors mb-2"
+            activeProps={{
+              className:
+                'flex items-center gap-3 p-3 rounded-lg bg-cyan-600 hover:bg-cyan-700 transition-colors mb-2',
+            }}
+          >
+            <Home size={20} />
+            <span className="font-medium">Tournaments</span>
+          </Link>
+
+          {isSignedIn && Boolean(user?.publicMetadata?.isAdmin) && (
+            <Link
+              to="/admin"
+              onClick={() => setIsOpen(false)}
+              className="flex items-center gap-3 p-3 rounded-lg hover:bg-gray-800 transition-colors mb-2"
+              activeProps={{
+                className:
+                  'flex items-center gap-3 p-3 rounded-lg bg-cyan-600 hover:bg-cyan-700 transition-colors mb-2',
+              }}
+            >
+              <Home size={20} />
+              <span className="font-medium">Admin Panel</span>
+            </Link>
+          )}
+
           {/* Demo Links Start */}
 
-          <Link
+          {/* <Link
             to="/demo/start/server-funcs"
             onClick={() => setIsOpen(false)}
             className="flex items-center gap-3 p-3 rounded-lg hover:bg-gray-800 transition-colors mb-2"
@@ -89,9 +116,9 @@ export default function Header() {
           >
             <SquareFunction size={20} />
             <span className="font-medium">Start - Server Functions</span>
-          </Link>
+          </Link> */}
 
-          <Link
+          {/* <Link
             to="/demo/start/api-request"
             onClick={() => setIsOpen(false)}
             className="flex items-center gap-3 p-3 rounded-lg hover:bg-gray-800 transition-colors mb-2"
@@ -102,9 +129,9 @@ export default function Header() {
           >
             <Network size={20} />
             <span className="font-medium">Start - API Request</span>
-          </Link>
+          </Link> */}
 
-          <div className="flex flex-row justify-between">
+          {/* <div className="flex flex-row justify-between">
             <Link
               to="/demo/start/ssr"
               onClick={() => setIsOpen(false)}
@@ -174,9 +201,9 @@ export default function Header() {
                 <span className="font-medium">Data Only</span>
               </Link>
             </div>
-          )}
+          )} */}
 
-          <Link
+          {/* <Link
             to="/demo/tanstack-query"
             onClick={() => setIsOpen(false)}
             className="flex items-center gap-3 p-3 rounded-lg hover:bg-gray-800 transition-colors mb-2"
@@ -187,9 +214,9 @@ export default function Header() {
           >
             <Network size={20} />
             <span className="font-medium">TanStack Query</span>
-          </Link>
+          </Link> */}
 
-          <Link
+          {/* <Link
             to="/demo/store"
             onClick={() => setIsOpen(false)}
             className="flex items-center gap-3 p-3 rounded-lg hover:bg-gray-800 transition-colors mb-2"
@@ -200,9 +227,9 @@ export default function Header() {
           >
             <Store size={20} />
             <span className="font-medium">Store</span>
-          </Link>
+          </Link> */}
 
-          <Link
+          {/* <Link
             to="/demo/table"
             onClick={() => setIsOpen(false)}
             className="flex items-center gap-3 p-3 rounded-lg hover:bg-gray-800 transition-colors mb-2"
@@ -213,9 +240,9 @@ export default function Header() {
           >
             <Table size={20} />
             <span className="font-medium">TanStack Table</span>
-          </Link>
+          </Link> */}
 
-          <Link
+          {/* <Link
             to="/demo/form/simple"
             onClick={() => setIsOpen(false)}
             className="flex items-center gap-3 p-3 rounded-lg hover:bg-gray-800 transition-colors mb-2"
@@ -239,9 +266,9 @@ export default function Header() {
           >
             <ClipboardType size={20} />
             <span className="font-medium">Address Form</span>
-          </Link>
+          </Link> */}
 
-          <Link
+          {/* <Link
             to="/demo/db-chat"
             onClick={() => setIsOpen(false)}
             className="flex items-center gap-3 p-3 rounded-lg hover:bg-gray-800 transition-colors mb-2"
@@ -252,9 +279,9 @@ export default function Header() {
           >
             <Database size={20} />
             <span className="font-medium">DB Chat</span>
-          </Link>
+          </Link> */}
 
-          <Link
+          {/* <Link
             to="/demo/clerk"
             onClick={() => setIsOpen(false)}
             className="flex items-center gap-3 p-3 rounded-lg hover:bg-gray-800 transition-colors mb-2"
@@ -265,7 +292,7 @@ export default function Header() {
           >
             <Globe size={20} />
             <span className="font-medium">Clerk</span>
-          </Link>
+          </Link> */}
 
           {/* Demo Links End */}
         </nav>

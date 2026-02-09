@@ -1,13 +1,11 @@
 import {
-  ColumnFiltersState,
   createColumnHelper,
   FilterFn,
-  FilterFnOption,
   flexRender,
   getCoreRowModel,
   useReactTable,
 } from '@tanstack/react-table'
-import { useMemo, useState } from 'react'
+import { useMemo } from 'react'
 import Loader from '@/components/Loader'
 import { useUser } from '@clerk/clerk-react'
 import { createFileRoute } from '@tanstack/react-router'
@@ -72,6 +70,7 @@ function Tournaments() {
             to="/tournaments/$tournamentId"
             params={{ tournamentId: String(info.row.original.id) }}
             className="tournamentLink"
+            search={(prev) => ({ bracketId: null })}
           >
             {info.getValue()}
           </Link>

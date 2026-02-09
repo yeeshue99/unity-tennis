@@ -23,7 +23,6 @@ export const isValidClerkId = (id: string) => clerkIdRegex.test(id)
 
 export const clerkFetch = async (path: string, options?: RequestInit) => {
   const secret = import.meta.env.VITE_CLERK_SECRET_KEY
-  console.log('clerk secret: ', secret)
   if (!secret) throw new Error('Clerk secret key is not defined')
   const response = await fetch(`https://api.clerk.com/v1${path}`, {
     ...options,

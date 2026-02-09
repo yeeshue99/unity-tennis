@@ -1,0 +1,116 @@
+import { encrypt } from '@/cryptography/cryptography'
+import { useSupabaseClient } from '@/db/db'
+
+export interface Player {
+  id: number
+  name: string
+  gender: string
+  clerk_id: string
+  phone_number?: string
+  paid?: boolean
+}
+
+export const fetchAllPlayers = async (token: any, isAdmin: boolean) => {
+  const supabase = useSupabaseClient(token)
+  const columns = isAdmin
+    ? 'id, name, gender, phone_number, clerk_id'
+    : 'id, name, gender, clerk_id'
+  const response = await supabase.from('players').select(columns)
+  if (!response.status || response.error) {
+    throw new Error('Network response was not ok')
+  }
+  return response.data as unknown as Player[]
+}
+
+export const fetchAllPlayersInBracket = async (
+  bracketId: number,
+  token: any,
+) => {
+  if (!bracketId) {
+    return []
+  }
+  const supabase = useSupabaseClient(token)
+  const response = await supabase
+    .from('bracket_players')
+    .select('id, player_id, bracket_id, paid')
+    .eq('bracket_id', bracketId)
+  if (!response.status || response.error) {
+    throw new Error('Network response was not ok')
+  }
+  return response.data
+}
+
+export const registerPlayerToBracket = async (
+  playerId: number,
+  bracketId: number,
+  token: any,
+) => {
+  const supabase = useSupabaseClient(token)
+  const response = await supabase.from('bracket_players').insert({
+    player_id: playerId,
+    bracket_id: bracketId,
+    paid: false,
+  })
+  if (!response.status || response.error) {
+    throw new Error('Network response was not ok')
+  }
+  return response.data
+}
+
+export const addPlayerToBracket = async (
+  playerId: number,
+  bracketId: number,
+  token: any,
+) => {
+  const supabase = useSupabaseClient(token)
+  const response = await supabase.from('bracket_players').insert({
+    player_id: playerId,
+    bracket_id: bracketId,
+    paid: false,
+  })
+  if (!response.status || response.error) {
+    throw new Error('Network response was not ok')
+  }
+  return response.data
+}
+
+export const removePlayerFromBracket = async (
+  playerId: number,
+  bracketId: number,
+  token: any,
+) => {
+  const supabase = useSupabaseClient(token)
+  const response = await supabase
+    .from('bracket_players')
+    .delete()
+    .eq('player_id', playerId)
+    .eq('bracket_id', bracketId)
+  if (!response.status || response.error) {
+    throw new Error('Network response was not ok')
+  }
+  return response.data
+}
+
+export const registerPlayer = async (
+  clerkId: string,
+  name: string,
+  gender: string,
+  phoneNumber: string,
+  token: any,
+) => {
+  const supabase = useSupabaseClient(token)
+
+  // Encrypt the phone number
+  const encryptedPhoneNumber = encrypt(phoneNumber)
+
+  const response = await supabase.from('players').insert({
+    clerk_id: clerkId,
+    name,
+    gender,
+    phone_number: encryptedPhoneNumber,
+  })
+  if (!response.status || response.error) {
+    throw new Error('Network response was not ok')
+  }
+  return response.status
+}

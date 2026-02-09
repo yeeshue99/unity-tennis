@@ -5,7 +5,6 @@ import { useSession } from '@clerk/clerk-react'
 export const fetchAdmins = async (token: any) => {
   const supabase = useSupabaseClient(token)
   const response = await supabase.from('admins').select()
-  console.log('Response:', response)
   if (!response.status || response.error) {
     throw new Error('Network response was not ok')
   }

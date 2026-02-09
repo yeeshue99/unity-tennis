@@ -16,7 +16,5 @@ function App() {
     return <div className="p-4">Sign in to view this page</div>
   }
 
-  console.log('User info:', user.id);
-
   return <div className="p-4">Hello {user.firstName}!</div>
 }

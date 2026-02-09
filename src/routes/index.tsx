@@ -1,4 +1,3 @@
-import { decrypt, encrypt } from '@/cryptography/cryptography'
 import { createFileRoute } from '@tanstack/react-router'
 import {
   Zap,
@@ -50,10 +49,5 @@ function App() {
     },
   ]
 
-  return (
-    <div className="p-4 flex justify-end space-x-4">
-      {encrypt('+15597491055')}
-      {decrypt(encrypt('+15597491055'))}
-    </div>
-  )
+  return <div className="p-4 flex justify-end space-x-4"></div>
 }

@@ -10,19 +10,8 @@ import {
   removePlayerFromBracket,
 } from '@/db/players'
 import { decrypt } from '@/cryptography/cryptography'
-import { Player } from '@/db/players'
+import { Player, BracketPlayer } from '@/db/players'
 import DeleteIcon from '@mui/icons-material/Delete'
-
-interface BracketPlayer {
-  id: number
-  name: string
-  gender: string
-  player_id: number
-  bracket_id: number
-  clerk_id: string
-  phone_number?: string
-  paid?: boolean
-}
 
 interface BracketPlayersTableProps {
   bracketId: number | null

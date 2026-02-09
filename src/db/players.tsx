@@ -10,6 +10,37 @@ export interface Player {
   paid?: boolean
 }
 
+export interface BracketPlayer {
+  id: number
+  name: string
+  gender: string
+  player_id: number
+  bracket_id: number
+  clerk_id: string
+  phone_number?: string
+  paid?: boolean
+}
+
+export interface Matchup {
+  id: number
+  player1_id: number
+  player2_id: number
+  player1_partner_id?: number
+  player2_partner_id?: number
+  winner_id?: number
+  bracket_id: number
+  score?: string
+  status: 'PLANNING' | 'COMPLETED' | 'PENDING'
+  round: number
+}
+
+export type MatchupDetails = Matchup & {
+  player1: Player | null
+  player2: Player | null
+  player1Partner: Player | null
+  player2Partner: Player | null
+}
+
 export const fetchAllPlayers = async (token: any, isAdmin: boolean) => {
   const supabase = useSupabaseClient(token)
   const columns = isAdmin
@@ -113,4 +144,24 @@ export const registerPlayer = async (
     throw new Error('Network response was not ok')
   }
   return response.status
+}
+
+export const fetchMatchupsForBracket = async (
+  bracketId: number,
+  round: number,
+  token: any,
+) => {
+  const supabase = useSupabaseClient(token)
+  const response = await supabase
+    .from('matchups')
+    .select(
+      'id, player1_id, player2_id, player1_partner_id, player2_partner_id, winner_id, bracket_id, score, status, round',
+    )
+    .eq('bracket_id', bracketId)
+    .eq('round', round)
+    .in('status', ['PLANNING', 'COMPLETED'])
+  if (!response.status || response.error) {
+    throw new Error('Network response was not ok')
+  }
+  return response.data
 }

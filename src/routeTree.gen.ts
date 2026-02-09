@@ -13,6 +13,7 @@ import { Route as AdminRouteImport } from './routes/admin'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as TournamentsIndexRouteImport } from './routes/tournaments/index'
 import { Route as RegisterIndexRouteImport } from './routes/register/index'
+import { Route as MatchupsIndexRouteImport } from './routes/matchups/index'
 import { Route as TournamentsTournamentIdRouteImport } from './routes/tournaments/$tournamentId'
 import { Route as DemoTanstackQueryRouteImport } from './routes/demo/tanstack-query'
 import { Route as DemoTableRouteImport } from './routes/demo/table'
@@ -49,6 +50,11 @@ const TournamentsIndexRoute = TournamentsIndexRouteImport.update({
 const RegisterIndexRoute = RegisterIndexRouteImport.update({
   id: '/register/',
   path: '/register/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const MatchupsIndexRoute = MatchupsIndexRouteImport.update({
+  id: '/matchups/',
+  path: '/matchups/',
   getParentRoute: () => rootRouteImport,
 } as any)
 const TournamentsTournamentIdRoute = TournamentsTournamentIdRouteImport.update({
@@ -147,6 +153,7 @@ export interface FileRoutesByFullPath {
   '/demo/table': typeof DemoTableRoute
   '/demo/tanstack-query': typeof DemoTanstackQueryRoute
   '/tournaments/$tournamentId': typeof TournamentsTournamentIdRoute
+  '/matchups/': typeof MatchupsIndexRoute
   '/register/': typeof RegisterIndexRoute
   '/tournaments/': typeof TournamentsIndexRoute
   '/demo/api/names': typeof DemoApiNamesRoute
@@ -170,6 +177,7 @@ export interface FileRoutesByTo {
   '/demo/table': typeof DemoTableRoute
   '/demo/tanstack-query': typeof DemoTanstackQueryRoute
   '/tournaments/$tournamentId': typeof TournamentsTournamentIdRoute
+  '/matchups': typeof MatchupsIndexRoute
   '/register': typeof RegisterIndexRoute
   '/tournaments': typeof TournamentsIndexRoute
   '/demo/api/names': typeof DemoApiNamesRoute
@@ -194,6 +202,7 @@ export interface FileRoutesById {
   '/demo/table': typeof DemoTableRoute
   '/demo/tanstack-query': typeof DemoTanstackQueryRoute
   '/tournaments/$tournamentId': typeof TournamentsTournamentIdRoute
+  '/matchups/': typeof MatchupsIndexRoute
   '/register/': typeof RegisterIndexRoute
   '/tournaments/': typeof TournamentsIndexRoute
   '/demo/api/names': typeof DemoApiNamesRoute
@@ -219,6 +228,7 @@ export interface FileRouteTypes {
     | '/demo/table'
     | '/demo/tanstack-query'
     | '/tournaments/$tournamentId'
+    | '/matchups/'
     | '/register/'
     | '/tournaments/'
     | '/demo/api/names'
@@ -242,6 +252,7 @@ export interface FileRouteTypes {
     | '/demo/table'
     | '/demo/tanstack-query'
     | '/tournaments/$tournamentId'
+    | '/matchups'
     | '/register'
     | '/tournaments'
     | '/demo/api/names'
@@ -265,6 +276,7 @@ export interface FileRouteTypes {
     | '/demo/table'
     | '/demo/tanstack-query'
     | '/tournaments/$tournamentId'
+    | '/matchups/'
     | '/register/'
     | '/tournaments/'
     | '/demo/api/names'
@@ -289,6 +301,7 @@ export interface RootRouteChildren {
   DemoTableRoute: typeof DemoTableRoute
   DemoTanstackQueryRoute: typeof DemoTanstackQueryRoute
   TournamentsTournamentIdRoute: typeof TournamentsTournamentIdRoute
+  MatchupsIndexRoute: typeof MatchupsIndexRoute
   RegisterIndexRoute: typeof RegisterIndexRoute
   TournamentsIndexRoute: typeof TournamentsIndexRoute
   DemoApiNamesRoute: typeof DemoApiNamesRoute
@@ -331,6 +344,13 @@ declare module '@tanstack/react-router' {
       path: '/register'
       fullPath: '/register/'
       preLoaderRoute: typeof RegisterIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/matchups/': {
+      id: '/matchups/'
+      path: '/matchups'
+      fullPath: '/matchups/'
+      preLoaderRoute: typeof MatchupsIndexRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/tournaments/$tournamentId': {
@@ -465,6 +485,7 @@ const rootRouteChildren: RootRouteChildren = {
   DemoTableRoute: DemoTableRoute,
   DemoTanstackQueryRoute: DemoTanstackQueryRoute,
   TournamentsTournamentIdRoute: TournamentsTournamentIdRoute,
+  MatchupsIndexRoute: MatchupsIndexRoute,
   RegisterIndexRoute: RegisterIndexRoute,
   TournamentsIndexRoute: TournamentsIndexRoute,
   DemoApiNamesRoute: DemoApiNamesRoute,

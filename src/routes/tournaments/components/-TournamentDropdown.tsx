@@ -13,8 +13,6 @@ interface TournamentDropdownProps {
   onTournamentChange: (tournamentId: number | null) => void
 }
 
-const API_BASE_URL = import.meta.env.VITE_APP_API_BASE_URL
-
 const TEST_DATA: Tournament[] = [
   {
     id: 1,

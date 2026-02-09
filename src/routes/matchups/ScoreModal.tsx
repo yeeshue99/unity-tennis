@@ -17,19 +17,29 @@ const ScoreModal: React.FC<ScoreModalProps> = ({
   if (!isOpen || !selectedMatchup) return null
 
   const handleSave = () => {
-    const scoreInput = (
+    const setScore1 = (
       document.getElementById('set-score-1') as HTMLInputElement
     )?.value
-    const setScore1 = (
+    const setScore2 = (
       document.getElementById('set-score-2') as HTMLInputElement
     )?.value
-    const setScore2 = (
+    const setScore3 = (
       document.getElementById('set-score-3') as HTMLInputElement
     )?.value
+    const setScore4 = (
+      document.getElementById('set-score-4') as HTMLInputElement
+    )?.value
+    const setScore5 = (
+      document.getElementById('set-score-5') as HTMLInputElement
+    )?.value
+    const setScore6 = (
+      document.getElementById('set-score-6') as HTMLInputElement
+    )?.value
+
     onSave(
       setScore2
-        ? `${scoreInput}/${setScore1}/${setScore2}`
-        : `${scoreInput}/${setScore1}`,
+        ? `${setScore1}-${setScore2}/${setScore3}-${setScore4}/${setScore5}-${setScore6}`
+        : `${setScore1}-${setScore2}/${setScore3}-${setScore4}`,
     )
   }
 
@@ -82,7 +92,7 @@ const ScoreModal: React.FC<ScoreModalProps> = ({
               flex: '3',
             }}
           />
-          <HorizontalRuleOutlinedIcon />
+          <HorizontalRuleOutlinedIcon className="mx-auto my-2.5" />
           <input
             id="set-score-2"
             type="text"
@@ -108,7 +118,7 @@ const ScoreModal: React.FC<ScoreModalProps> = ({
               borderRadius: '4px',
             }}
           />
-          <HorizontalRuleOutlinedIcon />
+          <HorizontalRuleOutlinedIcon className="mx-auto my-2.5" />
           <input
             id="set-score-4"
             type="text"
@@ -133,7 +143,7 @@ const ScoreModal: React.FC<ScoreModalProps> = ({
               borderRadius: '4px',
             }}
           />
-          <HorizontalRuleOutlinedIcon />
+          <HorizontalRuleOutlinedIcon className="mx-auto my-2.5" />
           <input
             id="set-score-6"
             type="text"

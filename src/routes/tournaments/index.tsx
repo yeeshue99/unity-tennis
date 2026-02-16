@@ -1,21 +1,16 @@
-import {
-  createColumnHelper,
-  FilterFn,
-  flexRender,
-  getCoreRowModel,
-  useReactTable,
-} from '@tanstack/react-table'
 import { useMemo } from 'react'
+import { DataGrid, GridColDef } from '@mui/x-data-grid'
 import Loader from '@/components/Loader'
-import { useUser } from '@clerk/clerk-react'
+import { useSession, useUser } from '@clerk/clerk-react'
 import { createFileRoute } from '@tanstack/react-router'
 import { Link } from '@tanstack/react-router'
+import './index.css'
+import { fetchTournaments } from '@/db/tournaments'
+import { useQuery } from '@tanstack/react-query'
 
 export const Route = createFileRoute('/tournaments/')({
   component: Tournaments,
 })
-
-import './index.css'
 
 type FORMAT = 'ROUND_ROBIN' | 'COMPASS' | 'SWISS'
 type STATUS = 'PLANNING' | 'ONGOING' | 'COMPLETED'
@@ -31,75 +26,60 @@ type Tournament = {
 
 function Tournaments() {
   const { isLoaded } = useUser()
+  const { session } = useSession()
 
-  const data: Tournament[] = [
-    {
-      id: 1,
-      name: '2026 Adult League Jan',
-      start_date: null,
-      end_date: null,
-      format: 'ROUND_ROBIN',
-      status: 'PLANNING',
-    },
-    {
-      id: 2,
-      name: '2026 Adult League Mar',
-      start_date: null,
-      end_date: null,
-      format: 'COMPASS',
-      status: 'PLANNING',
-    },
-    {
-      id: 3,
-      name: '2026 Adult League May',
-      start_date: null,
-      end_date: null,
-      format: 'SWISS',
-      status: 'PLANNING',
-    },
-    // Add more tournaments as needed
-  ]
-  const columnHelper = createColumnHelper<Tournament>()
+  const { data: allTournaments = [] } = useQuery<Tournament[]>({
+    queryKey: ['allTournaments'],
+    queryFn: async () => {
+      const response = await fetchTournaments(await session?.getToken())
+      if (!response) {
+        throw new Error('Failed to fetch all tournaments')
+      }
 
-  const columns = useMemo(
+      console.log('Fetched tournaments:', response)
+
+      return response as unknown as Tournament[]
+    },
+  })
+
+  const columns = useMemo<GridColDef[]>(
     () => [
-      columnHelper.accessor((row) => row.name, {
-        id: 'name',
-        cell: (info) => (
+      {
+        field: 'name',
+        headerName: 'Tournament Name',
+        flex: 1,
+        renderCell: (params) => (
           <Link
             to="/tournaments/$tournamentId"
-            params={{ tournamentId: String(info.row.original.id) }}
+            params={{ tournamentId: String(params.row.id) }}
             className="tournamentLink"
             search={(prev) => ({ bracketId: null })}
           >
-            {info.getValue()}
+            {params.value}
           </Link>
         ),
-        header: () => <span>Tournament Name</span>,
-        footer: (info) => info.column.id,
-      }),
-      columnHelper.accessor((row) => row.start_date, {
-        id: 'start_date',
-        cell: (info) => <i>{info.getValue() || 'TBD'}</i>,
-        header: () => <span>Start Date</span>,
-        footer: (info) => info.column.id,
-      }),
-      columnHelper.accessor((row) => row.end_date, {
-        id: 'end_date',
-        cell: (info) => <i>{info.getValue() || 'TBD'}</i>,
-        header: () => <span>End Date</span>,
-        footer: (info) => info.column.id,
-      }),
+      },
+      {
+        field: 'start_date',
+        headerName: 'Start Date',
+        width: 160,
+        renderCell: (params) => <i>{params.value || 'TBD'}</i>,
+      },
+      {
+        field: 'end_date',
+        headerName: 'End Date',
+        width: 160,
+        renderCell: (params) => <i>{params.value || 'TBD'}</i>,
+      },
+      {
+        field: 'status',
+        headerName: 'Status',
+        width: 140,
+        renderCell: (params) => <i>{params.value}</i>,
+      },
     ],
     [],
   )
-
-  const table = useReactTable({
-    data,
-    columns,
-    getCoreRowModel: getCoreRowModel(),
-    filterFns: {} as Record<'fuzzy', FilterFn<any>>,
-  })
 
   if (!isLoaded) {
     return <Loader />
@@ -111,51 +91,15 @@ function Tournaments() {
         <h1 className="h1">Tournaments</h1>
       </header>
 
-      <table>
-        <thead>
-          {table.getHeaderGroups().map((headerGroup) => (
-            <tr key={headerGroup.id}>
-              {headerGroup.headers.map((header) => (
-                <th key={header.id}>
-                  {header.isPlaceholder
-                    ? null
-                    : flexRender(
-                        header.column.columnDef.header,
-                        header.getContext(),
-                      )}
-                </th>
-              ))}
-            </tr>
-          ))}
-        </thead>
-        <tbody>
-          {table.getRowModel().rows.map((row) => (
-            <tr key={row.id}>
-              {row.getVisibleCells().map((cell) => (
-                <td key={cell.id}>
-                  {flexRender(cell.column.columnDef.cell, cell.getContext())}
-                </td>
-              ))}
-            </tr>
-          ))}
-        </tbody>
-        <tfoot>
-          {table.getFooterGroups().map((footerGroup) => (
-            <tr key={footerGroup.id}>
-              {footerGroup.headers.map((header) => (
-                <th key={header.id}>
-                  {header.isPlaceholder
-                    ? null
-                    : flexRender(
-                        header.column.columnDef.footer,
-                        header.getContext(),
-                      )}
-                </th>
-              ))}
-            </tr>
-          ))}
-        </tfoot>
-      </table>
+      <div style={{ height: 600, width: '100%' }}>
+        <DataGrid
+          rows={allTournaments}
+          columns={columns}
+          pageSizeOptions={[10, 25, 50]}
+          initialState={{ pagination: { paginationModel: { pageSize: 10 } } }}
+          disableRowSelectionOnClick
+        />
+      </div>
     </div>
   )
 }

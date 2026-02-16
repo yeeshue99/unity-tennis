@@ -1,6 +1,19 @@
 import { useSupabaseClient } from '@/db/db'
 import { MatchupStatus } from './matchups'
 
+export const fetchTournaments = async (token: any) => {
+  const supabase = useSupabaseClient(token)
+  const response = await supabase
+    .from('tournaments')
+    .select('id, name, status, current_round, start_date, end_date, format')
+
+  if (!response.status || response.error) {
+    throw new Error('Network response was not ok')
+  }
+
+  return response.data
+}
+
 export const startTournament = async (
   token: any,
   tournament_id: number,

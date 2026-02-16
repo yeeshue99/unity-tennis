@@ -105,7 +105,7 @@ const StartTournamentButton: React.FC<StartTournamentButtonProps> = ({
   return (
     <Button
       variant="contained"
-      color="success"
+      color="warning"
       onClick={handleStartNextRound}
       fullWidth
       disabled={

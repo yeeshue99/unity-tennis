@@ -4,6 +4,7 @@ import { tanstackStart } from '@tanstack/react-start/plugin/vite'
 import viteReact from '@vitejs/plugin-react'
 import viteTsConfigPaths from 'vite-tsconfig-paths'
 import tailwindcss from '@tailwindcss/vite'
+import netlify from '@netlify/vite-plugin'
 
 const config = defineConfig({
   plugins: [
@@ -15,6 +16,7 @@ const config = defineConfig({
     tailwindcss(),
     tanstackStart(),
     viteReact(),
+    netlify(),
   ],
   optimizeDeps: {
     exclude: ['js-big-decimal'],

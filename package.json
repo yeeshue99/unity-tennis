@@ -19,6 +19,7 @@
     "@mui/icons-material": "^7.3.7",
     "@mui/material": "^7.3.7",
     "@mui/x-data-grid": "^8.27.0",
+    "@netlify/vite-plugin": "^2.9.0",
     "@oliverlooney/react-brackets": "^0.4.11",
     "@supabase/supabase-js": "^2.90.1",
     "@tailwindcss/vite": "^4.0.6",

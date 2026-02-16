@@ -90,16 +90,17 @@ function RouteComponent() {
         'Last name cannot contain special characters or numbers'
     }
 
-    const phoneRegex = /^\+?[0-9]{1,3}[- ]?[0-9]{10}$/
+    const phoneRegex = /^\(?[0-9]{1,3}\)?[ ]?[0-9]{3}[-]?[0-9]{4}$/
     if (!formData.phoneNumber.trim()) {
       newErrors.phoneNumber = 'Phone number is required'
     } else if (!phoneRegex.test(formData.phoneNumber)) {
-      newErrors.phoneNumber =
-        'Phone number must be a valid format with an optional country code'
-    } else if (!formData.phoneNumber.startsWith('+')) {
+      newErrors.phoneNumber = 'Phone number not valid.'
+    } else if (!formData.phoneNumber.startsWith('(')) {
+      const digitsOnly = formData.phoneNumber.replace(/\D/g, '')
+      const formattedPhoneNumber = `(${digitsOnly.slice(0, 3)}) ${digitsOnly.slice(3, 6)}-${digitsOnly.slice(6, 10)}`
       setFormData((prevFormData) => ({
         ...prevFormData,
-        phoneNumber: `+1${formData.phoneNumber}`,
+        phoneNumber: formattedPhoneNumber,
       }))
     }
 

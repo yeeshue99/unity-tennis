@@ -5,5 +5,10 @@ export const Route = createFileRoute('/admin')({
 })
 
 function RouteComponent() {
-  return <div>Hello "/admin"!</div>
+  return (
+    <div>
+      Not Implemented yet! Here you will be able to create new tournaments and
+      brackets.
+    </div>
+  )
 }

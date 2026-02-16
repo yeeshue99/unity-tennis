@@ -15,10 +15,12 @@ import DeleteIcon from '@mui/icons-material/Delete'
 import { useNavigate } from '@tanstack/react-router'
 
 interface BracketPlayersTableProps {
+  tournamentId: number | null
   bracketId: number | null
 }
 
 const BracketPlayersTable: React.FC<BracketPlayersTableProps> = ({
+  tournamentId,
   bracketId,
 }) => {
   const queryClient = useQueryClient()
@@ -140,6 +142,9 @@ const BracketPlayersTable: React.FC<BracketPlayersTableProps> = ({
       } else {
         navigate({
           to: '/register',
+          search: () => ({
+            redirect: `/tournaments/${tournamentId}?bracketId=${bracketId}`,
+          }),
         })
       }
     }

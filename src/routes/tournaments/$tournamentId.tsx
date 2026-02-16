@@ -81,7 +81,10 @@ function RouteComponent() {
           />
         </div>
       </div>
-      <BracketPlayersTable bracketId={bracketId} />
+      <BracketPlayersTable
+        tournamentId={Number(tournamentId) || null}
+        bracketId={bracketId}
+      />
       {isAdmin && (
         <BracketMatchups
           tournamentId={Number(tournamentId) || null}

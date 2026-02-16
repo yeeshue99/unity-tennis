@@ -16,11 +16,20 @@ import {
   useUser,
   useSession,
 } from '@clerk/clerk-react'
-import { registerPlayer } from '@/db/players'
+import { isPlayerInDb, registerPlayer } from '@/db/players'
 import Loader from '@/components/Loader'
+
+type REGISTER_SEARCH_PARAMS = {
+  redirect: string | null
+}
 
 export const Route = createFileRoute('/register/')({
   component: RouteComponent,
+  validateSearch: (search: Record<string, unknown>): REGISTER_SEARCH_PARAMS => {
+    return {
+      redirect: String(search.redirect) || null,
+    }
+  },
 })
 
 const GENDER_OPTIONS = [
@@ -30,6 +39,7 @@ const GENDER_OPTIONS = [
 ]
 
 function RouteComponent() {
+  const { redirect } = Route.useSearch()
   const { isSignedIn } = useAuth()
   const { user, isLoaded } = useUser()
   const { session } = useSession()
@@ -49,8 +59,6 @@ function RouteComponent() {
     gender: '',
   })
 
-  const [customGender, setCustomGender] = useState('')
-
   useEffect(() => {
     if (isSignedIn && user) {
       const phoneNumber = user.primaryPhoneNumber?.phoneNumber || ''
@@ -60,6 +68,22 @@ function RouteComponent() {
       }))
     }
   }, [isSignedIn, user])
+
+  useEffect(() => {
+    const checkPlayerInDb = async () => {
+      if (isSignedIn && user) {
+        const playerExists = await isPlayerInDb(
+          user.id,
+          await session?.getToken(),
+        )
+        if (playerExists) {
+          navigate({ to: redirect || '/tournaments' })
+        }
+      }
+    }
+
+    checkPlayerInDb()
+  }, [isSignedIn, user, session, navigate])
 
   const validate = () => {
     const newErrors: {
@@ -135,9 +159,6 @@ function RouteComponent() {
       ...errors,
       gender: '',
     })
-    if (value !== 'custom') {
-      setCustomGender('')
-    }
   }
 
   const handleSubmit = async (e: React.FormEvent) => {

@@ -189,3 +189,16 @@ export const fetchMatchupsForBracket = async (
     return response.data
   }
 }
+
+export const isPlayerInDb = async (clerkId: string, token: any) => {
+  const supabase = useSupabaseClient(token)
+  const response = await supabase
+    .from('players')
+    .select('id')
+    .eq('clerk_id', clerkId)
+    .single()
+  if (!response.status || response.error) {
+    throw new Error('Network response was not ok')
+  }
+  return response.data !== null
+}

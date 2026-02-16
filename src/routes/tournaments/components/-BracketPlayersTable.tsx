@@ -232,6 +232,7 @@ const BracketPlayersTable: React.FC<BracketPlayersTableProps> = ({
           color="secondary"
           onClick={handleAddSelf}
           style={{ flex: 1, width: '60%', margin: '0 auto' }}
+          disabled={tournamentId === null || bracketId === null}
         >
           {playersInBracket.some((p) => p.clerk_id === user.id)
             ? 'Remove yourself from this bracket'

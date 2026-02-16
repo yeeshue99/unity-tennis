@@ -12,6 +12,7 @@ import {
 import { decrypt } from '@/cryptography/cryptography'
 import { Player, BracketPlayer } from '@/db/players'
 import DeleteIcon from '@mui/icons-material/Delete'
+import { useNavigate } from '@tanstack/react-router'
 
 interface BracketPlayersTableProps {
   bracketId: number | null
@@ -26,6 +27,7 @@ const BracketPlayersTable: React.FC<BracketPlayersTableProps> = ({
   const canManage = has ? has({ role: 'org:admin' }) : false
   const { session } = useSession()
   const isAdmin = isSignedIn && canManage
+  const navigate = useNavigate()
 
   const { data: allPlayers = [] } = useQuery<Player[]>({
     queryKey: ['allPlayers', isAdmin],
@@ -135,6 +137,10 @@ const BracketPlayersTable: React.FC<BracketPlayersTableProps> = ({
         } else {
           await addPlayerMutation.mutate({ playerId: player.id })
         }
+      } else {
+        navigate({
+          to: '/register',
+        })
       }
     }
   }

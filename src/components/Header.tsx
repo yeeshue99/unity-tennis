@@ -3,22 +3,8 @@ import { Link } from '@tanstack/react-router'
 import ClerkHeader from '../integrations/clerk/header-user.tsx'
 
 import { useState } from 'react'
-import {
-  ChevronDown,
-  ChevronRight,
-  ClipboardType,
-  Database,
-  Globe,
-  Home,
-  Menu,
-  Network,
-  SquareFunction,
-  StickyNote,
-  Store,
-  Table,
-  X,
-} from 'lucide-react'
-import { SignedIn, useUser } from '@clerk/clerk-react'
+import { Home, Menu, X } from 'lucide-react'
+import { useUser } from '@clerk/clerk-react'
 
 export default function Header() {
   const [isOpen, setIsOpen] = useState(false)

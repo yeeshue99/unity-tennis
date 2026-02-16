@@ -1,6 +1,5 @@
 import { useSupabaseClient } from '@/db/db'
 import { isValidClerkId, clerkFetch } from '@/integrations/clerk/provider'
-import { useSession } from '@clerk/clerk-react'
 
 export const fetchAdmins = async (token: any) => {
   const supabase = useSupabaseClient(token)

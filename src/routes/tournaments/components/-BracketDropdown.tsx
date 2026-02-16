@@ -7,6 +7,8 @@ import {
   type SelectChangeEvent,
 } from '@mui/material'
 import { useQuery } from '@tanstack/react-query'
+import { fetchBracketsForTournament } from '@/db/brackets'
+import { useSession } from '@clerk/clerk-react'
 
 interface BracketDropdownProps {
   selectedTournament: number | null
@@ -20,33 +22,14 @@ interface Bracket {
   name: string
 }
 
-const API_BASE_URL = import.meta.env.VITE_APP_API_BASE_URL
-
-const TEST_DATA: Bracket[] = [
-  {
-    id: 1,
-    name: 'Yellow League',
-  },
-  {
-    id: 2,
-    name: 'Red League',
-  },
-  {
-    id: 3,
-    name: 'Blue League',
-  },
-  {
-    id: 4,
-    name: 'Green League',
-  },
-]
-
 const BracketDropdown: React.FC<BracketDropdownProps> = ({
   selectedTournament,
   selectedBracket,
   onBracketChange,
   disabled,
 }) => {
+  const { session } = useSession()
+
   const {
     data: brackets = [],
     isLoading,
@@ -54,15 +37,16 @@ const BracketDropdown: React.FC<BracketDropdownProps> = ({
   } = useQuery<Bracket[], Error>({
     queryKey: ['brackets', selectedTournament],
     queryFn: async () => {
-      // if (!selectedTournament) return []
-      // const response = await fetch(
-      //   `${API_BASE_URL}/tournaments/${selectedTournament}/brackets`,
-      // )
-      // if (!response.ok) {
-      //   throw new Error('Network response was not ok')
-      // }
-      // return response.json()
-      return TEST_DATA
+      if (!selectedTournament) {
+        return []
+      }
+
+      const response = await fetchBracketsForTournament(
+        await session?.getToken(),
+        selectedTournament,
+      )
+
+      return response as unknown as Bracket[]
     },
   })
 

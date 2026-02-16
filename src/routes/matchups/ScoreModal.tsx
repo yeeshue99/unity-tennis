@@ -1,11 +1,11 @@
-import React from 'react'
+import React, { useState } from 'react'
 import HorizontalRuleOutlinedIcon from '@mui/icons-material/HorizontalRuleOutlined'
 
 interface ScoreModalProps {
   isOpen: boolean
-  selectedMatchup: { id: number } | null
+  selectedMatchup: any | null
   onClose: () => void
-  onSave: (score: string) => void
+  onSave: (score: string, winnerId?: number) => void
 }
 
 const ScoreModal: React.FC<ScoreModalProps> = ({
@@ -16,7 +16,26 @@ const ScoreModal: React.FC<ScoreModalProps> = ({
 }) => {
   if (!isOpen || !selectedMatchup) return null
 
+  const [selectedWinner, setSelectedWinner] = useState<number | null>(null)
+
+  const getPlayerId = (side: 'player1' | 'player2') =>
+    selectedMatchup?.[`${side}_id`] ?? selectedMatchup?.[side]?.id
+
+  const getPlayerName = (side: 'player1' | 'player2') =>
+    selectedMatchup?.[side]?.name ??
+    (side === 'player1' ? 'Player 1' : 'Player 2')
+
+  const toggleWinner = (playerId?: number) => {
+    if (!playerId) return
+    setSelectedWinner((prev) => (prev === playerId ? null : playerId))
+  }
+
   const handleSave = () => {
+    if (!selectedWinner) {
+      alert('Please select a winner before saving the score.')
+      return
+    }
+
     const setScore1 = (
       document.getElementById('set-score-1') as HTMLInputElement
     )?.value
@@ -36,11 +55,12 @@ const ScoreModal: React.FC<ScoreModalProps> = ({
       document.getElementById('set-score-6') as HTMLInputElement
     )?.value
 
-    onSave(
-      setScore2
+    const scoreString =
+      setScore5 && setScore6
         ? `${setScore1}-${setScore2}/${setScore3}-${setScore4}/${setScore5}-${setScore6}`
-        : `${setScore1}-${setScore2}/${setScore3}-${setScore4}`,
-    )
+        : `${setScore1}-${setScore2}/${setScore3}-${setScore4}`
+
+    onSave(scoreString, selectedWinner ?? undefined)
   }
 
   return (
@@ -72,6 +92,38 @@ const ScoreModal: React.FC<ScoreModalProps> = ({
         <h4 className="mb-4">
           Input the score from the perspective of the winner
         </h4>
+
+        <div
+          style={{
+            display: 'flex',
+            justifyContent: 'center',
+            gap: '1.5rem',
+            marginBottom: '1rem',
+          }}
+        >
+          <label
+            style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}
+          >
+            <input
+              type="checkbox"
+              checked={selectedWinner === getPlayerId('player1')}
+              onChange={() => toggleWinner(getPlayerId('player1'))}
+            />
+            {getPlayerName('player1')}
+          </label>
+
+          <label
+            style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}
+          >
+            <input
+              type="checkbox"
+              checked={selectedWinner === getPlayerId('player2')}
+              onChange={() => toggleWinner(getPlayerId('player2'))}
+            />
+            {getPlayerName('player2')}
+          </label>
+        </div>
+
         <div
           style={{
             display: 'grid',

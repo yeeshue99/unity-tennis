@@ -5,7 +5,7 @@ import BracketPlayersTable from './components/-BracketPlayersTable'
 import BracketMatchups from './components/-BracketMatchups'
 import { useState } from 'react'
 import { useAuth, useUser } from '@clerk/clerk-react'
-import RegisterPlayersToBracket from './components/-RegisterPlayersToBracket'
+import StartTournamentButton from './components/-StartTournamentButton'
 
 type TOURNAMENTS_SEARCH_PARAMS = {
   bracketId: number | null
@@ -82,8 +82,18 @@ function RouteComponent() {
         </div>
       </div>
       <BracketPlayersTable bracketId={bracketId} />
-      {isAdmin && <BracketMatchups bracketId={bracketId} />}
-      {isAdmin && <RegisterPlayersToBracket bracketId={bracketId} />}
+      {isAdmin && (
+        <BracketMatchups
+          tournamentId={Number(tournamentId) || null}
+          bracketId={bracketId}
+        />
+      )}
+      {isAdmin && (
+        <StartTournamentButton
+          tournamentId={Number(tournamentId) || null}
+          bracketId={bracketId}
+        />
+      )}
     </div>
   )
 }

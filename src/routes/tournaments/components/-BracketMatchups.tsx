@@ -12,8 +12,16 @@ import {
   Select,
 } from '@mui/material'
 import type { SelectChangeEvent } from '@mui/material'
+import {
+  deleteAllMatchups,
+  fetchMatchups,
+  generateMatchups,
+} from '@/db/matchups'
+import { useSession } from '@clerk/clerk-react'
+import { Link } from '@tanstack/react-router'
 
 interface BracketMatchupsProps {
+  tournamentId: number | null
   bracketId: number | null
 }
 
@@ -37,28 +45,37 @@ interface Matchup {
 
 // const API_BASE_URL = import.meta.env.VITE_APP_API_BASE_URL;
 
-const BracketMatchups: React.FC<BracketMatchupsProps> = ({ bracketId }) => {
+const BracketMatchups: React.FC<BracketMatchupsProps> = ({
+  tournamentId,
+  bracketId,
+}) => {
   const queryClient = useQueryClient()
   const [isModalOpen, setIsModalOpen] = useState(false)
   const [format, setFormat] = useState('ROUND_ROBIN')
+  const { session } = useSession()
 
   const handleFormatChange = (event: SelectChangeEvent) => {
     setFormat(event.target.value)
   }
 
-  const { data: matchups = [], refetch } = useQuery<Matchup[], Error>({
-    queryKey: ['matchups', bracketId],
+  const { data: hasMatchups = 0, refetch } = useQuery<number, Error>({
+    queryKey: ['matchups', bracketId, true],
     queryFn: async () => {
       if (!bracketId) {
         throw new Error('Invalid bracket ID')
       }
-      return [] // Placeholder until API is implemented
 
-      // const response = await fetch(`${API_BASE_URL}/brackets/${bracketId}/matchups`);
-      // if (!response.ok) {
-      //   throw new Error("Failed to fetch matchups");
-      // }
-      // return response.json();
+      const response = await fetchMatchups(
+        await session?.getToken(),
+        bracketId!,
+        true,
+      )
+
+      if (!response) {
+        throw new Error('Failed to fetch matchups')
+      }
+
+      return response as number
     },
   })
 
@@ -72,16 +89,13 @@ const BracketMatchups: React.FC<BracketMatchupsProps> = ({ bracketId }) => {
         throw new Error('Invalid bracket ID')
       }
 
-      // const response = await fetch(`${API_BASE_URL}/matchups/generate`, {
-      //   method: "POST",
-      //   headers: {
-      //     "Content-Type": "application/json",
-      //   },
-      //   body: JSON.stringify({ bracket_id: bracketId, format }),
-      // });
-      // if (!response.ok) {
-      //   throw new Error("Failed to create matchups");
-      // }
+      await deleteAllMatchups(await session?.getToken(), bracketId!)
+
+      await generateMatchups(
+        await session?.getToken(),
+        bracketId!,
+        'ROUND_ROBIN',
+      )
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['matchups', bracketId] })
@@ -153,17 +167,17 @@ const BracketMatchups: React.FC<BracketMatchupsProps> = ({ bracketId }) => {
     setIsModalOpen(false)
   }
 
-  const groupedMatchups = matchups.reduce<Record<number, Matchup[]>>(
-    (acc, matchup) => {
-      const round = matchup.round || 0
-      if (!acc[round]) {
-        acc[round] = []
-      }
-      acc[round].push(matchup)
-      return acc
-    },
-    {},
-  )
+  // const groupedMatchups = hasMatchups.reduce<Record<number, Matchup[]>>(
+  //   (acc, matchup) => {
+  //     const round = matchup.round || 0
+  //     if (!acc[round]) {
+  //       acc[round] = []
+  //     }
+  //     acc[round].push(matchup)
+  //     return acc
+  //   },
+  //   {},
+  // )
 
   const [editingScore, setEditingScore] = useState<{ [key: number]: boolean }>(
     {},
@@ -191,7 +205,7 @@ const BracketMatchups: React.FC<BracketMatchupsProps> = ({ bracketId }) => {
   }
 
   return (
-    <div>
+    <div style={{ marginBottom: '2rem' }}>
       <FormControl fullWidth style={{ marginBottom: '1rem' }}>
         <InputLabel id="format-dropdown-label">Select Format</InputLabel>
         <Select
@@ -205,27 +219,42 @@ const BracketMatchups: React.FC<BracketMatchupsProps> = ({ bracketId }) => {
         </Select>
       </FormControl>
 
-      {matchups.length === 0 ? (
-        <Button
-          variant="contained"
-          color="primary"
-          onClick={handleCreateMatchups}
-          disabled={
-            createMatchupsMutation.status === 'pending' || bracketId === null
-          }
-        >
-          Create Matchups
-        </Button>
-      ) : (
+      {hasMatchups === 0 ? (
         <div style={{ display: 'flex', gap: '1rem' }}>
           <Button
             variant="contained"
-            color="secondary"
-            onClick={handleOpenModal}
+            color="primary"
+            onClick={handleCreateMatchups}
+            fullWidth
+            disabled={
+              createMatchupsMutation.status === 'pending' || bracketId === null
+            }
+          >
+            Create Matchups
+          </Button>
+        </div>
+      ) : (
+        <div style={{ display: 'flex', gap: '1rem' }}>
+          <Link
+            to="/matchups"
+            params={{ tournamentId: String() }}
+            className="tournamentLink"
+            search={(prev) => ({
+              tournamentId: tournamentId ? Number(tournamentId) : null,
+              bracketId: bracketId ? Number(bracketId) : null,
+            })}
             style={{ flex: 1 }}
           >
-            View Matchups
-          </Button>
+            <Button
+              variant="contained"
+              color="secondary"
+              onClick={handleOpenModal}
+              fullWidth
+            >
+              View Matchups
+            </Button>
+          </Link>
+
           <Button
             variant="contained"
             color="primary"
@@ -248,7 +277,7 @@ const BracketMatchups: React.FC<BracketMatchupsProps> = ({ bracketId }) => {
       >
         <DialogTitle>Matchups</DialogTitle>
         <DialogContent>
-          {Object.entries(groupedMatchups).map(([round, roundMatchups]) => (
+          {/* {Object.entries(groupedMatchups).map(([round, roundMatchups]) => (
             <div key={round} style={{ marginBottom: '2rem' }}>
               <h3>Round {round}</h3>
               {roundMatchups.map((matchup: Matchup, index: number) => (
@@ -336,7 +365,7 @@ const BracketMatchups: React.FC<BracketMatchupsProps> = ({ bracketId }) => {
                 </div>
               ))}
             </div>
-          ))}
+          ))} */}
         </DialogContent>
         <DialogActions>
           <Button onClick={handleCloseModal} color="primary">

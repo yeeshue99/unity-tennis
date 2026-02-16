@@ -52,7 +52,7 @@ const BracketPlayersTable: React.FC<BracketPlayersTableProps> = ({
   const { data: playersInBracket = [] as BracketPlayer[] } = useQuery<
     BracketPlayer[]
   >({
-    queryKey: ['bracketPlayers', isAdmin, allPlayers.length, bracketId],
+    queryKey: ['bracketPlayers', isAdmin!, allPlayers.length, bracketId],
     queryFn: async () => {
       if (!bracketId) {
         return []
@@ -90,7 +90,7 @@ const BracketPlayersTable: React.FC<BracketPlayersTableProps> = ({
     },
     onSuccess: () => {
       queryClient.invalidateQueries({
-        queryKey: ['bracketPlayers', isAdmin, allPlayers.length, bracketId],
+        queryKey: ['bracketPlayers', isAdmin!, allPlayers.length, bracketId],
       })
       setSelectedPlayer(null)
     },
@@ -106,7 +106,7 @@ const BracketPlayersTable: React.FC<BracketPlayersTableProps> = ({
     },
     onSuccess: () => {
       queryClient.invalidateQueries({
-        queryKey: ['bracketPlayers', isAdmin, allPlayers.length, bracketId],
+        queryKey: ['bracketPlayers', isAdmin!, allPlayers.length, bracketId],
       })
       setSelectedPlayer(null)
     },

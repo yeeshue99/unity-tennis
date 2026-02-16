@@ -14,6 +14,8 @@ import { useQuery } from '@tanstack/react-query'
 import { SavedPlayer, savedPlayersCollection } from '@/db/saved-players'
 import { useState } from 'react'
 import ScoreModal from './ScoreModal'
+import { getRoundsForBracket, updateMatchup } from '@/db/matchups'
+import { Select, MenuItem, InputLabel } from '@mui/material'
 
 type MATCHUP_SEARCH_PARAMS = {
   tournamentId: number | null
@@ -39,7 +41,7 @@ function RouteComponent() {
   const isAdmin = isSignedIn && canManage
 
   const { data: allPlayers = [] } = useQuery<Player[]>({
-    queryKey: ['allPlayers', isAdmin],
+    queryKey: ['allPlayers', isAdmin!],
     queryFn: async () => {
       const response = await fetchAllPlayers(
         await session?.getToken(),
@@ -49,8 +51,18 @@ function RouteComponent() {
         throw new Error('Failed to fetch all players')
       }
 
-      savedPlayersCollection.insert(response as unknown as SavedPlayer[])
-      console.log(savedPlayersCollection.get(1))
+      try {
+        savedPlayersCollection.insert(response as unknown as SavedPlayer[])
+        console.log(
+          'savedPlayersCollection.get(1):',
+          savedPlayersCollection.get(1),
+        )
+      } catch (error) {
+        console.error(
+          'Error inserting players into savedPlayersCollection:',
+          error,
+        )
+      }
 
       return response as unknown as Player[]
     },
@@ -66,11 +78,22 @@ function RouteComponent() {
       allPlayers.find((p) => p.id === playerId)
     )
   }
+  const [isModalOpen, setIsModalOpen] = useState(false)
+  const [selectedMatchup, setSelectedMatchup] = useState<MatchupDetails | null>(
+    null,
+  )
+  const [selectedRound, setSelectedRound] = useState<number>(1)
 
   const { data: matchups = [] as MatchupDetails[] } = useQuery<
     MatchupDetails[]
   >({
-    queryKey: ['matchups', isAdmin, allPlayers.length, bracketId, 1],
+    queryKey: [
+      'matchups',
+      isAdmin,
+      allPlayers.length,
+      bracketId,
+      selectedRound,
+    ],
     queryFn: async () => {
       if (!bracketId) {
         return []
@@ -78,7 +101,7 @@ function RouteComponent() {
 
       const response = await fetchMatchupsForBracket(
         bracketId,
-        1,
+        selectedRound,
         await session?.getToken(),
       )
       if (!response) {
@@ -110,10 +133,25 @@ function RouteComponent() {
     },
   })
 
-  const [isModalOpen, setIsModalOpen] = useState(false)
-  const [selectedMatchup, setSelectedMatchup] = useState<MatchupDetails | null>(
-    null,
-  )
+  const { data: rounds = [] as number[] } = useQuery<number[]>({
+    queryKey: ['rounds', bracketId],
+    queryFn: async () => {
+      if (!bracketId) {
+        return []
+      }
+
+      const response = await getRoundsForBracket(
+        await session?.getToken(),
+        bracketId,
+      )
+
+      if (!response) {
+        throw new Error('Failed to fetch rounds for bracket')
+      }
+
+      return response as unknown as number[]
+    },
+  })
 
   const setScore = (matchupId: number) => {
     const matchup = matchups.find((m) => m.id === matchupId)
@@ -126,9 +164,19 @@ function RouteComponent() {
     setSelectedMatchup(null)
   }
 
-  const handleSaveScore = (score: string) => {
-    console.log(`Saving score for matchup ${selectedMatchup?.id}: ${score}`)
-    // Add logic to save the score here
+  const handleSaveScore = async (score: string, winnerId?: number) => {
+    console.log('Saving score:', {
+      score,
+      winnerId,
+      matchupId: selectedMatchup?.id,
+    })
+    updateMatchup(
+      await session?.getToken(),
+      selectedMatchup!.id,
+      winnerId ?? selectedMatchup!.winner_id!,
+      score,
+    )
+
     closeModal()
   }
 
@@ -192,6 +240,29 @@ function RouteComponent() {
       <h2 className="text-2xl font-bold mb-4">Matchups</h2>
       <div
         style={{
+          display: 'flex',
+          gap: '1rem',
+          alignItems: 'center',
+          marginBottom: '1rem',
+        }}
+      >
+        <InputLabel id="select-round-label">Round: </InputLabel>
+        <Select
+          labelId="select-round-label"
+          label="Round: "
+          value={selectedRound}
+          onChange={(e) => setSelectedRound(Number(e.target.value))}
+          style={{ padding: '0.25rem', borderRadius: 4 }}
+        >
+          {rounds.map((r) => (
+            <MenuItem key={r} value={r}>
+              {r}
+            </MenuItem>
+          ))}
+        </Select>
+      </div>
+      <div
+        style={{
           display: 'grid',
           gridTemplateColumns: '1fr 1fr',
           gap: '1rem',
@@ -210,9 +281,6 @@ function RouteComponent() {
             className={matchup.winner_id ? 'bg-green-300' : ''}
           >
             <div>
-              <p>
-                <strong>Matchup ID:</strong> {matchup.id}
-              </p>
               <p>
                 <strong>Round:</strong> {matchup.round}
               </p>

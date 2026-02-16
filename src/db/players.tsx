@@ -1,5 +1,7 @@
 import { encrypt } from '@/cryptography/cryptography'
 import { useSupabaseClient } from '@/db/db'
+import { MatchupStatus } from './matchups'
+import { getBracketStatus } from './brackets'
 
 export interface Player {
   id: number
@@ -152,16 +154,38 @@ export const fetchMatchupsForBracket = async (
   token: any,
 ) => {
   const supabase = useSupabaseClient(token)
-  const response = await supabase
-    .from('matchups')
-    .select(
-      'id, player1_id, player2_id, player1_partner_id, player2_partner_id, winner_id, bracket_id, score, status, round',
-    )
-    .eq('bracket_id', bracketId)
-    .eq('round', round)
-    .in('status', ['PLANNING', 'COMPLETED'])
-  if (!response.status || response.error) {
-    throw new Error('Network response was not ok')
+  const bracketStatus = await getBracketStatus(token, bracketId)
+
+  if (bracketStatus === 'PENDING') {
+    const response = await supabase
+      .from('matchups')
+      .select(
+        'id, player1_id, player2_id, player1_partner_id, player2_partner_id, winner_id, bracket_id, score, status, round',
+      )
+      .eq('bracket_id', bracketId)
+      .eq('round', round)
+      .order('status', { ascending: true })
+
+    if (!response.status || response.error) {
+      throw new Error('Network response was not ok')
+    }
+
+    return response.data
+  } else {
+    const response = await supabase
+      .from('matchups')
+      .select(
+        'id, player1_id, player2_id, player1_partner_id, player2_partner_id, winner_id, bracket_id, score, status, round',
+      )
+      .eq('bracket_id', bracketId)
+      .eq('round', round)
+      .in('status', [MatchupStatus.IN_PROGRESS, MatchupStatus.COMPLETED])
+      .order('status', { ascending: true })
+
+    if (!response.status || response.error) {
+      throw new Error('Network response was not ok')
+    }
+
+    return response.data
   }
-  return response.data
 }

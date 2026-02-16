@@ -13,7 +13,7 @@ import {
 import { useQuery } from '@tanstack/react-query'
 import { SavedPlayer, savedPlayersCollection } from '@/db/saved-players'
 import { useState } from 'react'
-import ScoreModal from './ScoreModal'
+import ScoreModal from './-ScoreModal'
 import { getRoundsForBracket, updateMatchup } from '@/db/matchups'
 import { Select, MenuItem, InputLabel } from '@mui/material'
 

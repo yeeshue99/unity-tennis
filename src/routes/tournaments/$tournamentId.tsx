@@ -3,9 +3,9 @@ import TournamentDropdown from './components/-TournamentDropdown'
 import BracketDropdown from './components/-BracketDropdown'
 import BracketPlayersTable from './components/-BracketPlayersTable'
 import BracketMatchups from './components/-BracketMatchups'
-import { useState } from 'react'
-import { useAuth, useUser } from '@clerk/clerk-react'
 import StartTournamentButton from './components/-StartTournamentButton'
+import { useCurrentUser } from '@/db/users'
+import Loader from '@/components/Loader'
 
 type TOURNAMENTS_SEARCH_PARAMS = {
   bracketId: number | null
@@ -26,10 +26,7 @@ function RouteComponent() {
   const { tournamentId } = Route.useParams()
   const { bracketId } = Route.useSearch()
   const navigate = useNavigate()
-  const { isSignedIn } = useUser()
-  const { has } = useAuth()
-  const canManage = has ? has({ role: 'org:admin' }) : false
-  const isAdmin = isSignedIn && canManage
+  const { isAdmin, isLoaded } = useCurrentUser()
 
   const changeTournament = (tournamentId: number | null) => {
     if (tournamentId) {
@@ -49,6 +46,10 @@ function RouteComponent() {
       params: { tournamentId: String(tournamentId) },
       search: (prev) => ({ bracketId: bracketId }),
     })
+  }
+
+  if (!isLoaded) {
+    return <Loader />
   }
 
   return (

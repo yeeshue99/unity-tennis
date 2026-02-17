@@ -6,11 +6,7 @@
   background: var(--g), var(--g), var(--g);
   background-size: 30px 30px;
   animation: l10 1.5s infinite;
-  position: absolute;
-  left: 50%;
-  top: 50%;
-  -webkit-transform: translate(-50%, -50%);
-  transform: translate(-50%, -50%);
+  margin: auto auto;
 }
 @keyframes l10 {
   0% {

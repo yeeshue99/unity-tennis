@@ -1,12 +1,12 @@
 import { useMemo } from 'react'
 import { DataGrid, GridColDef } from '@mui/x-data-grid'
 import Loader from '@/components/Loader'
-import { useSession, useUser } from '@clerk/clerk-react'
 import { createFileRoute } from '@tanstack/react-router'
 import { Link } from '@tanstack/react-router'
 import './index.css'
 import { fetchTournaments } from '@/db/tournaments'
 import { useQuery } from '@tanstack/react-query'
+import { useCurrentUser } from '@/db/users'
 
 export const Route = createFileRoute('/tournaments/')({
   component: Tournaments,
@@ -25,13 +25,12 @@ type Tournament = {
 }
 
 function Tournaments() {
-  const { isLoaded } = useUser()
-  const { session } = useSession()
+  const { isLoaded } = useCurrentUser()
 
   const { data: allTournaments = [] } = useQuery<Tournament[]>({
     queryKey: ['allTournaments'],
     queryFn: async () => {
-      const response = await fetchTournaments(await session?.getToken())
+      const response = await fetchTournaments()
       if (!response) {
         throw new Error('Failed to fetch all tournaments')
       }

@@ -11,4 +11,8 @@ export function useSupabaseClient(token: any) {
   return supabaseClient
 }
 
+export function createSupabaseClient() {
+  return createClient(supabaseUrl, supabaseKey)
+}
+
 export default useSupabaseClient

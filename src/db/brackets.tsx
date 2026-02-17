@@ -1,7 +1,7 @@
-import useSupabaseClient from './db'
+import { createSupabaseClient } from './db'
 
-export const getBracketStatus = async (token: any, bracket_id: number) => {
-  const supabase = useSupabaseClient(token)
+export const getBracketStatus = async (bracket_id: number) => {
+  const supabase = createSupabaseClient()
   const response = await supabase
     .from('brackets')
     .select('status')
@@ -14,11 +14,8 @@ export const getBracketStatus = async (token: any, bracket_id: number) => {
   return response.data[0]?.status || 'PENDING'
 }
 
-export const fetchBracketsForTournament = async (
-  token: any,
-  tournamentId: number,
-) => {
-  const supabase = useSupabaseClient(token)
+export const fetchBracketsForTournament = async (tournamentId: number) => {
+  const supabase = createSupabaseClient()
   const response = await supabase
     .from('brackets')
     .select('id, name')

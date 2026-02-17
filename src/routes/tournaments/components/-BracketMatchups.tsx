@@ -17,7 +17,6 @@ import {
   fetchMatchups,
   generateMatchups,
 } from '@/db/matchups'
-import { useSession } from '@clerk/clerk-react'
 import { Link } from '@tanstack/react-router'
 
 interface BracketMatchupsProps {
@@ -52,7 +51,6 @@ const BracketMatchups: React.FC<BracketMatchupsProps> = ({
   const queryClient = useQueryClient()
   const [isModalOpen, setIsModalOpen] = useState(false)
   const [format, setFormat] = useState('ROUND_ROBIN')
-  const { session } = useSession()
 
   const handleFormatChange = (event: SelectChangeEvent) => {
     setFormat(event.target.value)
@@ -65,11 +63,7 @@ const BracketMatchups: React.FC<BracketMatchupsProps> = ({
         throw new Error('Invalid bracket ID')
       }
 
-      const response = await fetchMatchups(
-        await session?.getToken(),
-        bracketId!,
-        true,
-      )
+      const response = await fetchMatchups(bracketId!, true)
 
       if (!response) {
         throw new Error('Failed to fetch matchups')
@@ -89,13 +83,9 @@ const BracketMatchups: React.FC<BracketMatchupsProps> = ({
         throw new Error('Invalid bracket ID')
       }
 
-      await deleteAllMatchups(await session?.getToken(), bracketId!)
+      await deleteAllMatchups(bracketId!)
 
-      await generateMatchups(
-        await session?.getToken(),
-        bracketId!,
-        'ROUND_ROBIN',
-      )
+      await generateMatchups(bracketId!, 'ROUND_ROBIN')
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['matchups', bracketId] })

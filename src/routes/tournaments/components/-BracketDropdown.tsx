@@ -8,7 +8,6 @@ import {
 } from '@mui/material'
 import { useQuery } from '@tanstack/react-query'
 import { fetchBracketsForTournament } from '@/db/brackets'
-import { useSession } from '@clerk/clerk-react'
 
 interface BracketDropdownProps {
   selectedTournament: number | null
@@ -28,8 +27,6 @@ const BracketDropdown: React.FC<BracketDropdownProps> = ({
   onBracketChange,
   disabled,
 }) => {
-  const { session } = useSession()
-
   const {
     data: brackets = [],
     isLoading,
@@ -41,10 +38,7 @@ const BracketDropdown: React.FC<BracketDropdownProps> = ({
         return []
       }
 
-      const response = await fetchBracketsForTournament(
-        await session?.getToken(),
-        selectedTournament,
-      )
+      const response = await fetchBracketsForTournament(selectedTournament)
 
       return response as unknown as Bracket[]
     },

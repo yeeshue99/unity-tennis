@@ -1,5 +1,5 @@
 import { encrypt } from '@/cryptography/cryptography'
-import { useSupabaseClient } from '@/db/db'
+import { createSupabaseClient, useSupabaseClient } from '@/db/db'
 import { MatchupStatus } from './matchups'
 import { getBracketStatus } from './brackets'
 
@@ -7,9 +7,10 @@ export interface Player {
   id: number
   name: string
   gender: string
-  clerk_id: string
+  supabase_id: string
   phone_number?: string
   paid?: boolean
+  isAdmin?: boolean
 }
 
 export interface BracketPlayer {
@@ -18,7 +19,7 @@ export interface BracketPlayer {
   gender: string
   player_id: number
   bracket_id: number
-  clerk_id: string
+  supabase_id: string
   phone_number?: string
   paid?: boolean
 }
@@ -43,11 +44,11 @@ export type MatchupDetails = Matchup & {
   player2Partner: Player | null
 }
 
-export const fetchAllPlayers = async (token: any, isAdmin: boolean) => {
-  const supabase = useSupabaseClient(token)
+export const fetchAllPlayers = async (isAdmin: boolean) => {
+  const supabase = createSupabaseClient()
   const columns = isAdmin
-    ? 'id, name, gender, phone_number, clerk_id'
-    : 'id, name, gender, clerk_id'
+    ? 'id, name, gender, phone_number, supabase_id'
+    : 'id, name, gender, supabase_id'
   const response = await supabase.from('players').select(columns)
   if (!response.status || response.error) {
     throw new Error('Network response was not ok')
@@ -55,14 +56,11 @@ export const fetchAllPlayers = async (token: any, isAdmin: boolean) => {
   return response.data as unknown as Player[]
 }
 
-export const fetchAllPlayersInBracket = async (
-  bracketId: number,
-  token: any,
-) => {
+export const fetchAllPlayersInBracket = async (bracketId: number) => {
   if (!bracketId) {
     return []
   }
-  const supabase = useSupabaseClient(token)
+  const supabase = createSupabaseClient()
   const response = await supabase
     .from('bracket_players')
     .select('id, player_id, bracket_id, paid')
@@ -76,9 +74,8 @@ export const fetchAllPlayersInBracket = async (
 export const registerPlayerToBracket = async (
   playerId: number,
   bracketId: number,
-  token: any,
 ) => {
-  const supabase = useSupabaseClient(token)
+  const supabase = createSupabaseClient()
   const response = await supabase.from('bracket_players').insert({
     player_id: playerId,
     bracket_id: bracketId,
@@ -93,9 +90,8 @@ export const registerPlayerToBracket = async (
 export const addPlayerToBracket = async (
   playerId: number,
   bracketId: number,
-  token: any,
 ) => {
-  const supabase = useSupabaseClient(token)
+  const supabase = createSupabaseClient()
   const response = await supabase.from('bracket_players').insert({
     player_id: playerId,
     bracket_id: bracketId,
@@ -110,9 +106,8 @@ export const addPlayerToBracket = async (
 export const removePlayerFromBracket = async (
   playerId: number,
   bracketId: number,
-  token: any,
 ) => {
-  const supabase = useSupabaseClient(token)
+  const supabase = createSupabaseClient()
   const response = await supabase
     .from('bracket_players')
     .delete()
@@ -125,19 +120,18 @@ export const removePlayerFromBracket = async (
 }
 
 export const registerPlayer = async (
-  clerkId: string,
+  supabaseId: string,
   name: string,
   gender: string,
   phoneNumber: string,
-  token: any,
 ) => {
-  const supabase = useSupabaseClient(token)
+  const supabase = createSupabaseClient()
 
   // Encrypt the phone number
   const encryptedPhoneNumber = encrypt(phoneNumber)
 
   const response = await supabase.from('players').insert({
-    clerk_id: clerkId,
+    supabase_id: supabaseId,
     name,
     gender,
     phone_number: encryptedPhoneNumber,
@@ -151,10 +145,9 @@ export const registerPlayer = async (
 export const fetchMatchupsForBracket = async (
   bracketId: number,
   round: number,
-  token: any,
 ) => {
-  const supabase = useSupabaseClient(token)
-  const bracketStatus = await getBracketStatus(token, bracketId)
+  const supabase = createSupabaseClient()
+  const bracketStatus = await getBracketStatus(bracketId)
 
   if (bracketStatus === 'PENDING') {
     const response = await supabase
@@ -190,12 +183,12 @@ export const fetchMatchupsForBracket = async (
   }
 }
 
-export const isPlayerInDb = async (clerkId: string, token: any) => {
-  const supabase = useSupabaseClient(token)
+export const isPlayerInDb = async (supabaseId: string) => {
+  const supabase = createSupabaseClient()
   const response = await supabase
     .from('players')
     .select('id')
-    .eq('clerk_id', clerkId)
+    .eq('supabase_id', supabaseId)
     .single()
   if (!response.status || response.error) {
     throw new Error('Network response was not ok')

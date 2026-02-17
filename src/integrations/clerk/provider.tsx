@@ -17,9 +17,9 @@ export default function AppClerkProvider({
   )
 }
 
-const clerkIdRegex = /^user_[a-zA-Z0-9]+$/
+const supabaseIdRegex = /^user_[a-zA-Z0-9]+$/
 
-export const isValidClerkId = (id: string) => clerkIdRegex.test(id)
+export const isValidsupabaseId = (id: string) => supabaseIdRegex.test(id)
 
 export const clerkFetch = async (path: string, options?: RequestInit) => {
   const secret = import.meta.env.VITE_CLERK_SECRET_KEY

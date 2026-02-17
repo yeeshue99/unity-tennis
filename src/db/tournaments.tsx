@@ -1,8 +1,8 @@
-import { useSupabaseClient } from '@/db/db'
+import { createSupabaseClient } from '@/db/db'
 import { MatchupStatus } from './matchups'
 
-export const fetchTournaments = async (token: any) => {
-  const supabase = useSupabaseClient(token)
+export const fetchTournaments = async () => {
+  const supabase = createSupabaseClient()
   const response = await supabase
     .from('tournaments')
     .select('id, name, status, current_round, start_date, end_date, format')
@@ -15,11 +15,10 @@ export const fetchTournaments = async (token: any) => {
 }
 
 export const startTournament = async (
-  token: any,
   tournament_id: number,
   bracket_id: number,
 ) => {
-  const supabase = useSupabaseClient(token)
+  const supabase = createSupabaseClient()
   const tournamentResponse = await supabase
     .from('tournaments')
     .update({
@@ -44,7 +43,6 @@ export const startTournament = async (
   }
 
   const nextRoundResponse = await updateMatchupsForCurrentRound(
-    token,
     bracket_id,
     tournamentResponse.data[0].current_round,
   )
@@ -57,11 +55,10 @@ export const startTournament = async (
 }
 
 export const activateNextRound = async (
-  token: any,
   tournament_id: number,
   bracket_id: number,
 ) => {
-  const supabase = useSupabaseClient(token)
+  const supabase = createSupabaseClient()
 
   const bracketResponse = await supabase
     .from('tournaments')
@@ -100,11 +97,10 @@ export const activateNextRound = async (
 }
 
 export const updateMatchupsForCurrentRound = async (
-  token: any,
   bracket_id: number,
   current_round: number,
 ) => {
-  const supabase = useSupabaseClient(token)
+  const supabase = createSupabaseClient()
 
   const response = await supabase
     .from('matchups')

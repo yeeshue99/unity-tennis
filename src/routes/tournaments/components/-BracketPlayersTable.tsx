@@ -2,7 +2,6 @@ import React, { useState } from 'react'
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import { Autocomplete, Button, TextField } from '@mui/material'
 import { DataGrid, GridApi, GridColDef, GridKeyValue } from '@mui/x-data-grid'
-import { useAuth, useUser, useSession } from '@clerk/clerk-react'
 import {
   addPlayerToBracket,
   fetchAllPlayers,
@@ -13,6 +12,8 @@ import { decrypt } from '@/cryptography/cryptography'
 import { Player, BracketPlayer } from '@/db/players'
 import DeleteIcon from '@mui/icons-material/Delete'
 import { useNavigate } from '@tanstack/react-router'
+import { useCurrentUser } from '@/db/users'
+import Loader from '@/components/Loader'
 
 interface BracketPlayersTableProps {
   tournamentId: number | null
@@ -24,20 +25,13 @@ const BracketPlayersTable: React.FC<BracketPlayersTableProps> = ({
   bracketId,
 }) => {
   const queryClient = useQueryClient()
-  const { isSignedIn, user } = useUser()
-  const { has } = useAuth()
-  const canManage = has ? has({ role: 'org:admin' }) : false
-  const { session } = useSession()
-  const isAdmin = isSignedIn && canManage
+  const { isSignedIn, user, isAdmin, isLoaded } = useCurrentUser()
   const navigate = useNavigate()
 
   const { data: allPlayers = [] } = useQuery<Player[]>({
     queryKey: ['allPlayers', isAdmin],
     queryFn: async () => {
-      const response = await fetchAllPlayers(
-        await session?.getToken(),
-        !!isAdmin,
-      )
+      const response = await fetchAllPlayers(isAdmin)
       if (!response) {
         throw new Error('Failed to fetch all players')
       }
@@ -62,10 +56,7 @@ const BracketPlayersTable: React.FC<BracketPlayersTableProps> = ({
         return []
       }
 
-      const response = await fetchAllPlayersInBracket(
-        bracketId,
-        await session?.getToken(),
-      )
+      const response = await fetchAllPlayersInBracket(bracketId)
       if (!response) {
         throw new Error('Failed to fetch all players')
       }
@@ -78,7 +69,7 @@ const BracketPlayersTable: React.FC<BracketPlayersTableProps> = ({
           gender: playerDetails ? playerDetails.gender : 'Unknown',
           phone_number: playerDetails ? playerDetails.phone_number : 'Unknown',
           paid: playerDetails ? bp.paid : false,
-          clerk_id: playerDetails ? playerDetails.clerk_id : 'Unknown',
+          supabase_id: playerDetails ? playerDetails.supabase_id : 'Unknown',
         }
       })
 
@@ -90,7 +81,7 @@ const BracketPlayersTable: React.FC<BracketPlayersTableProps> = ({
 
   const addPlayerMutation = useMutation<void, Error, { playerId: number }>({
     mutationFn: async ({ playerId }: { playerId: number }) => {
-      await addPlayerToBracket(playerId, bracketId!, await session?.getToken())
+      const response = await addPlayerToBracket(playerId, bracketId!)
     },
     onSuccess: () => {
       queryClient.invalidateQueries({
@@ -102,11 +93,7 @@ const BracketPlayersTable: React.FC<BracketPlayersTableProps> = ({
 
   const removePlayerMutation = useMutation<void, Error, { playerId: number }>({
     mutationFn: async ({ playerId }: { playerId: number }) => {
-      await removePlayerFromBracket(
-        playerId,
-        bracketId!,
-        await session?.getToken(),
-      )
+      await removePlayerFromBracket(playerId, bracketId!)
     },
     onSuccess: () => {
       queryClient.invalidateQueries({
@@ -128,10 +115,11 @@ const BracketPlayersTable: React.FC<BracketPlayersTableProps> = ({
   }
 
   const handleAddSelf = async () => {
+    console.log('Current user:', user)
     if (user) {
-      const player = allPlayers.find((p) => p.clerk_id === user.id)
+      const player = allPlayers.find((p) => p.supabase_id === user.id)
       const isPlayerInBracket = playersInBracket.some(
-        (p) => p.clerk_id === user.id,
+        (p) => p.supabase_id === user.id,
       )
       if (player) {
         if (isPlayerInBracket) {
@@ -141,7 +129,7 @@ const BracketPlayersTable: React.FC<BracketPlayersTableProps> = ({
         }
       } else {
         navigate({
-          to: '/register',
+          to: '/login',
           search: () => ({
             redirect: `/tournaments/${tournamentId}?bracketId=${bracketId}`,
           }),
@@ -153,7 +141,7 @@ const BracketPlayersTable: React.FC<BracketPlayersTableProps> = ({
   const availablePlayers = allPlayers.filter(
     (player) =>
       !(playersInBracket as BracketPlayer[]).some(
-        (p) => p.player_id === player.id,
+        (p) => p.player_id === player.id || player.id === 0,
       ),
   )
 
@@ -208,6 +196,10 @@ const BracketPlayersTable: React.FC<BracketPlayersTableProps> = ({
       ]
     : ([...commonColumns, actionColumn] as GridColDef<BracketPlayer>[])
 
+  if (!isLoaded) {
+    return <Loader />
+  }
+
   return (
     <div
       style={{
@@ -233,7 +225,7 @@ const BracketPlayersTable: React.FC<BracketPlayersTableProps> = ({
           onClick={handleAddSelf}
           style={{ flex: 1, width: '60%', margin: '0 auto' }}
         >
-          {playersInBracket.some((p) => p.clerk_id === user.id)
+          {playersInBracket.some((p) => p.supabase_id === user.id)
             ? 'Remove yourself from this bracket'
             : 'Sign up for this bracket'}
         </Button>

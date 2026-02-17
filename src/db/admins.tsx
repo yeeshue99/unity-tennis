@@ -1,8 +1,8 @@
-import { useSupabaseClient } from '@/db/db'
-import { isValidClerkId, clerkFetch } from '@/integrations/clerk/provider'
+import { createSupabaseClient } from '@/db/db'
+import { isValidsupabaseId, clerkFetch } from '@/integrations/clerk/provider'
 
-export const fetchAdmins = async (token: any) => {
-  const supabase = useSupabaseClient(token)
+export const fetchAdmins = async () => {
+  const supabase = createSupabaseClient()
   const response = await supabase.from('admins').select()
   if (!response.status || response.error) {
     throw new Error('Network response was not ok')
@@ -10,10 +10,10 @@ export const fetchAdmins = async (token: any) => {
   return response.data
 }
 
-export const addAdmin = async (admin: string, token: any) => {
-  const supabase = useSupabaseClient(token)
+export const addAdmin = async (admin: string) => {
+  const supabase = createSupabaseClient()
 
-  if (!isValidClerkId(admin)) {
+  if (!isValidsupabaseId(admin)) {
     throw new Error('Invalid Clerk user ID format')
   }
 
@@ -32,8 +32,8 @@ export const addAdmin = async (admin: string, token: any) => {
 
   const response = await supabase.from('admins').insert({ user_id: admin })
 
-  if (!response.ok) {
+  if (!response.status || response.error) {
     throw new Error('Network response was not ok')
   }
-  return response.json()
+  return response.data
 }

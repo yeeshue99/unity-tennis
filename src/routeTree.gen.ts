@@ -11,9 +11,13 @@
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as AdminRouteImport } from './routes/admin'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as UpdatePasswordIndexRouteImport } from './routes/update-password/index'
 import { Route as TournamentsIndexRouteImport } from './routes/tournaments/index'
-import { Route as RegisterIndexRouteImport } from './routes/register/index'
+import { Route as SignUpIndexRouteImport } from './routes/sign-up/index'
+import { Route as SignUpSuccessIndexRouteImport } from './routes/sign-up-success/index'
 import { Route as MatchupsIndexRouteImport } from './routes/matchups/index'
+import { Route as LoginIndexRouteImport } from './routes/login/index'
+import { Route as ForgotPasswordIndexRouteImport } from './routes/forgot-password/index'
 import { Route as TournamentsTournamentIdRouteImport } from './routes/tournaments/$tournamentId'
 import { Route as DemoTanstackQueryRouteImport } from './routes/demo/tanstack-query'
 import { Route as DemoTableRouteImport } from './routes/demo/table'
@@ -27,6 +31,9 @@ import { Route as DemoFormSimpleRouteImport } from './routes/demo/form.simple'
 import { Route as DemoFormAddressRouteImport } from './routes/demo/form.address'
 import { Route as DemoApiTqTodosRouteImport } from './routes/demo/api.tq-todos'
 import { Route as DemoApiNamesRouteImport } from './routes/demo/api.names'
+import { Route as ProtectedAuthErrorRouteImport } from './routes/_protected/auth/error'
+import { Route as ProtectedAuthConfirmRouteImport } from './routes/_protected/auth/confirm'
+import { Route as ProtectedProtectedProtectedRouteImport } from './routes/_protected/_protected/protected'
 import { Route as DemoStartSsrIndexRouteImport } from './routes/demo/start.ssr.index'
 import { Route as DemoStartSsrSpaModeRouteImport } from './routes/demo/start.ssr.spa-mode'
 import { Route as DemoStartSsrFullSsrRouteImport } from './routes/demo/start.ssr.full-ssr'
@@ -42,19 +49,39 @@ const IndexRoute = IndexRouteImport.update({
   path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const UpdatePasswordIndexRoute = UpdatePasswordIndexRouteImport.update({
+  id: '/update-password/',
+  path: '/update-password/',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const TournamentsIndexRoute = TournamentsIndexRouteImport.update({
   id: '/tournaments/',
   path: '/tournaments/',
   getParentRoute: () => rootRouteImport,
 } as any)
-const RegisterIndexRoute = RegisterIndexRouteImport.update({
-  id: '/register/',
-  path: '/register/',
+const SignUpIndexRoute = SignUpIndexRouteImport.update({
+  id: '/sign-up/',
+  path: '/sign-up/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const SignUpSuccessIndexRoute = SignUpSuccessIndexRouteImport.update({
+  id: '/sign-up-success/',
+  path: '/sign-up-success/',
   getParentRoute: () => rootRouteImport,
 } as any)
 const MatchupsIndexRoute = MatchupsIndexRouteImport.update({
   id: '/matchups/',
   path: '/matchups/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const LoginIndexRoute = LoginIndexRouteImport.update({
+  id: '/login/',
+  path: '/login/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ForgotPasswordIndexRoute = ForgotPasswordIndexRouteImport.update({
+  id: '/forgot-password/',
+  path: '/forgot-password/',
   getParentRoute: () => rootRouteImport,
 } as any)
 const TournamentsTournamentIdRoute = TournamentsTournamentIdRouteImport.update({
@@ -122,6 +149,22 @@ const DemoApiNamesRoute = DemoApiNamesRouteImport.update({
   path: '/demo/api/names',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ProtectedAuthErrorRoute = ProtectedAuthErrorRouteImport.update({
+  id: '/_protected/auth/error',
+  path: '/auth/error',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ProtectedAuthConfirmRoute = ProtectedAuthConfirmRouteImport.update({
+  id: '/_protected/auth/confirm',
+  path: '/auth/confirm',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ProtectedProtectedProtectedRoute =
+  ProtectedProtectedProtectedRouteImport.update({
+    id: '/_protected/_protected/protected',
+    path: '/protected',
+    getParentRoute: () => rootRouteImport,
+  } as any)
 const DemoStartSsrIndexRoute = DemoStartSsrIndexRouteImport.update({
   id: '/demo/start/ssr/',
   path: '/demo/start/ssr/',
@@ -153,9 +196,16 @@ export interface FileRoutesByFullPath {
   '/demo/table': typeof DemoTableRoute
   '/demo/tanstack-query': typeof DemoTanstackQueryRoute
   '/tournaments/$tournamentId': typeof TournamentsTournamentIdRoute
+  '/forgot-password/': typeof ForgotPasswordIndexRoute
+  '/login/': typeof LoginIndexRoute
   '/matchups/': typeof MatchupsIndexRoute
-  '/register/': typeof RegisterIndexRoute
+  '/sign-up-success/': typeof SignUpSuccessIndexRoute
+  '/sign-up/': typeof SignUpIndexRoute
   '/tournaments/': typeof TournamentsIndexRoute
+  '/update-password/': typeof UpdatePasswordIndexRoute
+  '/protected': typeof ProtectedProtectedProtectedRoute
+  '/auth/confirm': typeof ProtectedAuthConfirmRoute
+  '/auth/error': typeof ProtectedAuthErrorRoute
   '/demo/api/names': typeof DemoApiNamesRoute
   '/demo/api/tq-todos': typeof DemoApiTqTodosRoute
   '/demo/form/address': typeof DemoFormAddressRoute
@@ -177,9 +227,16 @@ export interface FileRoutesByTo {
   '/demo/table': typeof DemoTableRoute
   '/demo/tanstack-query': typeof DemoTanstackQueryRoute
   '/tournaments/$tournamentId': typeof TournamentsTournamentIdRoute
+  '/forgot-password': typeof ForgotPasswordIndexRoute
+  '/login': typeof LoginIndexRoute
   '/matchups': typeof MatchupsIndexRoute
-  '/register': typeof RegisterIndexRoute
+  '/sign-up-success': typeof SignUpSuccessIndexRoute
+  '/sign-up': typeof SignUpIndexRoute
   '/tournaments': typeof TournamentsIndexRoute
+  '/update-password': typeof UpdatePasswordIndexRoute
+  '/protected': typeof ProtectedProtectedProtectedRoute
+  '/auth/confirm': typeof ProtectedAuthConfirmRoute
+  '/auth/error': typeof ProtectedAuthErrorRoute
   '/demo/api/names': typeof DemoApiNamesRoute
   '/demo/api/tq-todos': typeof DemoApiTqTodosRoute
   '/demo/form/address': typeof DemoFormAddressRoute
@@ -202,9 +259,16 @@ export interface FileRoutesById {
   '/demo/table': typeof DemoTableRoute
   '/demo/tanstack-query': typeof DemoTanstackQueryRoute
   '/tournaments/$tournamentId': typeof TournamentsTournamentIdRoute
+  '/forgot-password/': typeof ForgotPasswordIndexRoute
+  '/login/': typeof LoginIndexRoute
   '/matchups/': typeof MatchupsIndexRoute
-  '/register/': typeof RegisterIndexRoute
+  '/sign-up-success/': typeof SignUpSuccessIndexRoute
+  '/sign-up/': typeof SignUpIndexRoute
   '/tournaments/': typeof TournamentsIndexRoute
+  '/update-password/': typeof UpdatePasswordIndexRoute
+  '/_protected/_protected/protected': typeof ProtectedProtectedProtectedRoute
+  '/_protected/auth/confirm': typeof ProtectedAuthConfirmRoute
+  '/_protected/auth/error': typeof ProtectedAuthErrorRoute
   '/demo/api/names': typeof DemoApiNamesRoute
   '/demo/api/tq-todos': typeof DemoApiTqTodosRoute
   '/demo/form/address': typeof DemoFormAddressRoute
@@ -228,9 +292,16 @@ export interface FileRouteTypes {
     | '/demo/table'
     | '/demo/tanstack-query'
     | '/tournaments/$tournamentId'
+    | '/forgot-password/'
+    | '/login/'
     | '/matchups/'
-    | '/register/'
+    | '/sign-up-success/'
+    | '/sign-up/'
     | '/tournaments/'
+    | '/update-password/'
+    | '/protected'
+    | '/auth/confirm'
+    | '/auth/error'
     | '/demo/api/names'
     | '/demo/api/tq-todos'
     | '/demo/form/address'
@@ -252,9 +323,16 @@ export interface FileRouteTypes {
     | '/demo/table'
     | '/demo/tanstack-query'
     | '/tournaments/$tournamentId'
+    | '/forgot-password'
+    | '/login'
     | '/matchups'
-    | '/register'
+    | '/sign-up-success'
+    | '/sign-up'
     | '/tournaments'
+    | '/update-password'
+    | '/protected'
+    | '/auth/confirm'
+    | '/auth/error'
     | '/demo/api/names'
     | '/demo/api/tq-todos'
     | '/demo/form/address'
@@ -276,9 +354,16 @@ export interface FileRouteTypes {
     | '/demo/table'
     | '/demo/tanstack-query'
     | '/tournaments/$tournamentId'
+    | '/forgot-password/'
+    | '/login/'
     | '/matchups/'
-    | '/register/'
+    | '/sign-up-success/'
+    | '/sign-up/'
     | '/tournaments/'
+    | '/update-password/'
+    | '/_protected/_protected/protected'
+    | '/_protected/auth/confirm'
+    | '/_protected/auth/error'
     | '/demo/api/names'
     | '/demo/api/tq-todos'
     | '/demo/form/address'
@@ -301,9 +386,16 @@ export interface RootRouteChildren {
   DemoTableRoute: typeof DemoTableRoute
   DemoTanstackQueryRoute: typeof DemoTanstackQueryRoute
   TournamentsTournamentIdRoute: typeof TournamentsTournamentIdRoute
+  ForgotPasswordIndexRoute: typeof ForgotPasswordIndexRoute
+  LoginIndexRoute: typeof LoginIndexRoute
   MatchupsIndexRoute: typeof MatchupsIndexRoute
-  RegisterIndexRoute: typeof RegisterIndexRoute
+  SignUpSuccessIndexRoute: typeof SignUpSuccessIndexRoute
+  SignUpIndexRoute: typeof SignUpIndexRoute
   TournamentsIndexRoute: typeof TournamentsIndexRoute
+  UpdatePasswordIndexRoute: typeof UpdatePasswordIndexRoute
+  ProtectedProtectedProtectedRoute: typeof ProtectedProtectedProtectedRoute
+  ProtectedAuthConfirmRoute: typeof ProtectedAuthConfirmRoute
+  ProtectedAuthErrorRoute: typeof ProtectedAuthErrorRoute
   DemoApiNamesRoute: typeof DemoApiNamesRoute
   DemoApiTqTodosRoute: typeof DemoApiTqTodosRoute
   DemoFormAddressRoute: typeof DemoFormAddressRoute
@@ -332,6 +424,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/update-password/': {
+      id: '/update-password/'
+      path: '/update-password'
+      fullPath: '/update-password/'
+      preLoaderRoute: typeof UpdatePasswordIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/tournaments/': {
       id: '/tournaments/'
       path: '/tournaments'
@@ -339,11 +438,18 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof TournamentsIndexRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/register/': {
-      id: '/register/'
-      path: '/register'
-      fullPath: '/register/'
-      preLoaderRoute: typeof RegisterIndexRouteImport
+    '/sign-up/': {
+      id: '/sign-up/'
+      path: '/sign-up'
+      fullPath: '/sign-up/'
+      preLoaderRoute: typeof SignUpIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/sign-up-success/': {
+      id: '/sign-up-success/'
+      path: '/sign-up-success'
+      fullPath: '/sign-up-success/'
+      preLoaderRoute: typeof SignUpSuccessIndexRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/matchups/': {
@@ -351,6 +457,20 @@ declare module '@tanstack/react-router' {
       path: '/matchups'
       fullPath: '/matchups/'
       preLoaderRoute: typeof MatchupsIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/login/': {
+      id: '/login/'
+      path: '/login'
+      fullPath: '/login/'
+      preLoaderRoute: typeof LoginIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/forgot-password/': {
+      id: '/forgot-password/'
+      path: '/forgot-password'
+      fullPath: '/forgot-password/'
+      preLoaderRoute: typeof ForgotPasswordIndexRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/tournaments/$tournamentId': {
@@ -444,6 +564,27 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof DemoApiNamesRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/_protected/auth/error': {
+      id: '/_protected/auth/error'
+      path: '/auth/error'
+      fullPath: '/auth/error'
+      preLoaderRoute: typeof ProtectedAuthErrorRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/_protected/auth/confirm': {
+      id: '/_protected/auth/confirm'
+      path: '/auth/confirm'
+      fullPath: '/auth/confirm'
+      preLoaderRoute: typeof ProtectedAuthConfirmRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/_protected/_protected/protected': {
+      id: '/_protected/_protected/protected'
+      path: '/protected'
+      fullPath: '/protected'
+      preLoaderRoute: typeof ProtectedProtectedProtectedRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/demo/start/ssr/': {
       id: '/demo/start/ssr/'
       path: '/demo/start/ssr'
@@ -485,9 +626,16 @@ const rootRouteChildren: RootRouteChildren = {
   DemoTableRoute: DemoTableRoute,
   DemoTanstackQueryRoute: DemoTanstackQueryRoute,
   TournamentsTournamentIdRoute: TournamentsTournamentIdRoute,
+  ForgotPasswordIndexRoute: ForgotPasswordIndexRoute,
+  LoginIndexRoute: LoginIndexRoute,
   MatchupsIndexRoute: MatchupsIndexRoute,
-  RegisterIndexRoute: RegisterIndexRoute,
+  SignUpSuccessIndexRoute: SignUpSuccessIndexRoute,
+  SignUpIndexRoute: SignUpIndexRoute,
   TournamentsIndexRoute: TournamentsIndexRoute,
+  UpdatePasswordIndexRoute: UpdatePasswordIndexRoute,
+  ProtectedProtectedProtectedRoute: ProtectedProtectedProtectedRoute,
+  ProtectedAuthConfirmRoute: ProtectedAuthConfirmRoute,
+  ProtectedAuthErrorRoute: ProtectedAuthErrorRoute,
   DemoApiNamesRoute: DemoApiNamesRoute,
   DemoApiTqTodosRoute: DemoApiTqTodosRoute,
   DemoFormAddressRoute: DemoFormAddressRoute,

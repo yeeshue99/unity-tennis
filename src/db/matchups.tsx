@@ -1,4 +1,4 @@
-import { useSupabaseClient } from '@/db/db'
+import { createSupabaseClient } from '@/db/db'
 import { getBracketStatus } from './brackets'
 
 export enum MatchupStatus {
@@ -8,11 +8,10 @@ export enum MatchupStatus {
 }
 
 export const fetchMatchups = async (
-  token: any,
   bracket_id: number,
   head_only: boolean = false,
 ) => {
-  const supabase = useSupabaseClient(token)
+  const supabase = createSupabaseClient()
   const response = await supabase
     .from('matchups')
     .select('id', { count: 'exact', head: head_only })
@@ -28,8 +27,8 @@ export const fetchMatchups = async (
   return response.data
 }
 
-export const deleteAllMatchups = async (token: any, bracket_id: number) => {
-  const supabase = useSupabaseClient(token)
+export const deleteAllMatchups = async (bracket_id: number) => {
+  const supabase = createSupabaseClient()
   const response = await supabase
     .from('matchups')
     .delete()
@@ -43,12 +42,11 @@ export const deleteAllMatchups = async (token: any, bracket_id: number) => {
 }
 
 export const updateMatchup = async (
-  token: any,
   matchup_id: number,
   winner_id: number,
   score: string,
 ) => {
-  const supabase = useSupabaseClient(token)
+  const supabase = createSupabaseClient()
   const response = await supabase
     .from('matchups')
     .update({ winner_id, score, status: 'COMPLETED' })
@@ -61,12 +59,8 @@ export const updateMatchup = async (
   return response.data
 }
 
-export const generateMatchups = async (
-  token: any,
-  bracket_id: number,
-  format: string,
-) => {
-  const supabase = useSupabaseClient(token)
+export const generateMatchups = async (bracket_id: number, format: string) => {
+  const supabase = createSupabaseClient()
   const response = await supabase.functions.invoke('generate-matchups', {
     body: { name: 'Functions', bracket_id, format },
   })
@@ -78,9 +72,9 @@ export const generateMatchups = async (
   return true
 }
 
-export const getRoundsForBracket = async (token: any, bracket_id: number) => {
-  const supabase = useSupabaseClient(token)
-  const bracketStatus = await getBracketStatus(token, bracket_id)
+export const getRoundsForBracket = async (bracket_id: number) => {
+  const supabase = createSupabaseClient()
+  const bracketStatus = await getBracketStatus(bracket_id)
 
   if (bracketStatus === 'PENDING') {
     const response = await supabase.rpc('get_unique_rounds_all', {

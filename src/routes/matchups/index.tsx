@@ -1,6 +1,5 @@
 import { createFileRoute, useNavigate } from '@tanstack/react-router'
 import TournamentDropdown from '../tournaments/components/-TournamentDropdown'
-import { useAuth, useSession, useUser } from '@clerk/clerk-react'
 import BracketDropdown from '../tournaments/components/-BracketDropdown'
 import { Bracket, IRoundProps } from '@oliverlooney/react-brackets'
 import {
@@ -16,6 +15,8 @@ import { useState } from 'react'
 import ScoreModal from './-ScoreModal'
 import { getRoundsForBracket, updateMatchup } from '@/db/matchups'
 import { Select, MenuItem, InputLabel } from '@mui/material'
+import { useCurrentUser } from '@/db/users'
+import Loader from '@/components/Loader'
 
 type MATCHUP_SEARCH_PARAMS = {
   tournamentId: number | null
@@ -33,36 +34,20 @@ export const Route = createFileRoute('/matchups/')({
 
 function RouteComponent() {
   const { tournamentId, bracketId } = Route.useSearch()
-  const { isSignedIn } = useUser()
-  const { has } = useAuth()
+  const { isAdmin, isLoaded } = useCurrentUser()
   const navigate = useNavigate()
-  const { session } = useSession()
-  const canManage = has ? has({ role: 'org:admin' }) : false
-  const isAdmin = isSignedIn && canManage
 
   const { data: allPlayers = [] } = useQuery<Player[]>({
     queryKey: ['allPlayers', isAdmin!],
     queryFn: async () => {
-      const response = await fetchAllPlayers(
-        await session?.getToken(),
-        !!isAdmin,
-      )
+      const response = await fetchAllPlayers(!!isAdmin)
       if (!response) {
         throw new Error('Failed to fetch all players')
       }
 
       try {
         savedPlayersCollection.insert(response as unknown as SavedPlayer[])
-        console.log(
-          'savedPlayersCollection.get(1):',
-          savedPlayersCollection.get(1),
-        )
-      } catch (error) {
-        console.error(
-          'Error inserting players into savedPlayersCollection:',
-          error,
-        )
-      }
+      } catch (error) {}
 
       return response as unknown as Player[]
     },
@@ -99,11 +84,7 @@ function RouteComponent() {
         return []
       }
 
-      const response = await fetchMatchupsForBracket(
-        bracketId,
-        selectedRound,
-        await session?.getToken(),
-      )
+      const response = await fetchMatchupsForBracket(bracketId, selectedRound)
       if (!response) {
         throw new Error('Failed to fetch all players')
       }
@@ -140,10 +121,7 @@ function RouteComponent() {
         return []
       }
 
-      const response = await getRoundsForBracket(
-        await session?.getToken(),
-        bracketId,
-      )
+      const response = await getRoundsForBracket(bracketId)
 
       if (!response) {
         throw new Error('Failed to fetch rounds for bracket')
@@ -171,13 +149,16 @@ function RouteComponent() {
       matchupId: selectedMatchup?.id,
     })
     updateMatchup(
-      await session?.getToken(),
       selectedMatchup!.id,
       winnerId ?? selectedMatchup!.winner_id!,
       score,
     )
 
     closeModal()
+  }
+
+  if (!isLoaded) {
+    return <Loader />
   }
 
   if (!tournamentId || !bracketId) {
@@ -199,10 +180,10 @@ function RouteComponent() {
             onTournamentChange={(id) => {
               navigate({
                 to: '/matchups',
-                search: (s) => ({
-                  ...s,
+                search: (prev) => ({
+                  ...prev,
                   tournamentId: id,
-                  bracketId: s.bracketId ?? null,
+                  bracketId: prev?.bracketId ?? null,
                 }),
               })
             }}
@@ -214,9 +195,9 @@ function RouteComponent() {
             onBracketChange={(id) => {
               navigate({
                 to: '/matchups',
-                search: (s) => ({
-                  ...s,
-                  tournamentId: s.tournamentId ?? null,
+                search: (prev) => ({
+                  ...prev,
+                  tournamentId: prev?.tournamentId ?? null,
                   bracketId: id,
                 }),
               })

@@ -59,7 +59,7 @@ function Home() {
   const submitAdmin = useCallback(async () => {
     if (!isLoaded || !session) return
 
-    await addAdmin(admin, await session.getToken())
+    await addAdmin(admin)
     setAdmin('')
     router.invalidate()
   }, [addAdmin, admin, session])

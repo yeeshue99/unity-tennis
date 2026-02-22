@@ -14,6 +14,15 @@ export default function HeaderUser() {
     }
   }
 
+  // const supabase = createSupabaseClient()
+  // const { data: subscription } = supabase.auth.onAuthStateChange(
+  //   (event, session) => {
+  //     if (event === 'SIGNED_IN' || event === 'SIGNED_OUT') {
+  //       setChange((prev) => prev + 1)
+  //     }
+  //   },
+  // )
+
   if (!isLoaded) {
     return <Loader />
   }

@@ -41,6 +41,7 @@ export async function signOutUser() {
 
 export const fetchUserData = async (supabaseId: string) => {
   const supabase = createSupabaseClient()
+
   const response = await supabase
     .from('players')
     .select()
@@ -67,23 +68,40 @@ export function useCurrentUser() {
   const [isAdmin, setIsAdmin] = useState(false)
 
   useEffect(() => {
+    let cancelled = false
+
     const fetchUser = async () => {
       const supabase = createSupabaseClient()
       const {
         data: { user },
       } = await supabase.auth.getUser()
 
-      const userData = user ? await fetchUserData(user.id) : null
+      if (cancelled) return
 
-      setUser(user as UserResponse | null)
-      setUserData(userData)
-      setIsSignedIn(!!user)
-      setLoading(false)
-      setIsAdmin(userData?.isAdmin || false)
-      setIsLoaded(true)
+      try {
+        const userData = user ? await fetchUserData(user.id) : null
+
+        if (!cancelled) {
+          setUser(user as UserResponse | null)
+          setUserData(userData)
+          setIsSignedIn(!!user)
+          setIsAdmin(userData?.isAdmin || false)
+        }
+      } catch (error) {
+        console.error('Error fetching user data:', error)
+      } finally {
+        if (!cancelled) {
+          setLoading(false)
+          setIsLoaded(true)
+        }
+      }
     }
 
     fetchUser()
+
+    return () => {
+      cancelled = true
+    }
   }, [])
 
   return { user, loading, isAdmin, isSignedIn, isLoaded, userData }

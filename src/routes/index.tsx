@@ -38,10 +38,10 @@ function App() {
     <main className="max-w-4xl mx-auto p-8">
       <section className="text-center mb-12">
         <h1 className="text-4xl font-extrabold mb-4">
-          Isaac Yarell — Tennis Coach
+          Isaac Yarrell — Tennis Coach
         </h1>
         <p className="text-lg text-(--color-text-muted) mb-6">
-          Isaac Yarell is a passionate tennis coach and the director of UnITY
+          Isaac Yarrell is a passionate tennis coach and the director of UnITY
           Tennis, Merced’s only year-round public tennis program. With a mission
           to make tennis accessible to everyone, Isaac offers personalized
           coaching for players of all ages and skill levels.
@@ -65,7 +65,7 @@ function App() {
       <section id="about" className="mb-10">
         <h2 className="text-2xl font-semibold mb-3">About Isaac</h2>
         <p className="text-(--color-text-muted)">
-          Isaac Yarell began playing tennis at the age of six, inspired by his
+          Isaac Yarrell began playing tennis at the age of six, inspired by his
           father. Growing up in a challenging neighborhood in Cincinnati, tennis
           provided him with a safe haven and a sense of community. He went on to
           gain national exposure, compete in state finals, and play throughout
@@ -189,7 +189,7 @@ function App() {
       </section>
 
       <footer className="text-sm text-(--color-text-muted) mt-12">
-        © Isaac Yarell Coaching
+        © Isaac Yarrell Coaching
       </footer>
     </main>
   )

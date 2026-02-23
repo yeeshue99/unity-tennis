@@ -9,9 +9,9 @@ import {
   FormControl,
   InputLabel,
   MenuItem,
-  Select,
 } from '@mui/material'
 import type { SelectChangeEvent } from '@mui/material'
+import { ThemedSelect } from '@/components/ThemedSelect'
 import {
   deleteAllMatchups,
   fetchMatchups,
@@ -49,7 +49,6 @@ const BracketMatchups: React.FC<BracketMatchupsProps> = ({
   bracketId,
 }) => {
   const queryClient = useQueryClient()
-  const [isModalOpen, setIsModalOpen] = useState(false)
   const [format, setFormat] = useState('ROUND_ROBIN')
 
   const handleFormatChange = (event: SelectChangeEvent) => {
@@ -149,14 +148,6 @@ const BracketMatchups: React.FC<BracketMatchupsProps> = ({
     createMatchupsMutation.mutate({ bracketId: bracketId, format })
   }
 
-  const handleOpenModal = () => {
-    setIsModalOpen(true)
-  }
-
-  const handleCloseModal = () => {
-    setIsModalOpen(false)
-  }
-
   // const groupedMatchups = hasMatchups.reduce<Record<number, Matchup[]>>(
   //   (acc, matchup) => {
   //     const round = matchup.round || 0
@@ -196,18 +187,17 @@ const BracketMatchups: React.FC<BracketMatchupsProps> = ({
 
   return (
     <div style={{ marginBottom: '2rem' }}>
-      <FormControl fullWidth style={{ marginBottom: '1rem' }}>
-        <InputLabel id="format-dropdown-label">Select Format</InputLabel>
-        <Select
-          labelId="format-dropdown-label"
-          id="format-dropdown"
-          value={format}
-          onChange={handleFormatChange}
-        >
-          <MenuItem value="ROUND_ROBIN">Round-Robin</MenuItem>
-          <MenuItem value="SWISS">Swiss</MenuItem>
-        </Select>
-      </FormControl>
+      <ThemedSelect
+        labelId="format-dropdown-label"
+        id="format-dropdown"
+        value={format}
+        label="Select Format"
+        onChange={handleFormatChange}
+        sx={{ marginBottom: '1rem' }}
+      >
+        <MenuItem value="ROUND_ROBIN">Round-Robin</MenuItem>
+        <MenuItem value="SWISS">Swiss</MenuItem>
+      </ThemedSelect>
 
       {hasMatchups === 0 ? (
         <div style={{ display: 'flex', gap: '1rem' }}>
@@ -235,12 +225,7 @@ const BracketMatchups: React.FC<BracketMatchupsProps> = ({
             })}
             style={{ flex: 1 }}
           >
-            <Button
-              variant="contained"
-              color="secondary"
-              onClick={handleOpenModal}
-              fullWidth
-            >
+            <Button variant="contained" color="secondary" fullWidth>
               View Matchups
             </Button>
           </Link>
@@ -258,111 +243,6 @@ const BracketMatchups: React.FC<BracketMatchupsProps> = ({
           </Button>
         </div>
       )}
-
-      <Dialog
-        open={isModalOpen}
-        onClose={handleCloseModal}
-        fullWidth
-        maxWidth="md"
-      >
-        <DialogTitle>Matchups</DialogTitle>
-        <DialogContent>
-          {/* {Object.entries(groupedMatchups).map(([round, roundMatchups]) => (
-            <div key={round} style={{ marginBottom: '2rem' }}>
-              <h3>Round {round}</h3>
-              {roundMatchups.map((matchup: Matchup, index: number) => (
-                <div key={`${round}-${index}`} style={{ marginBottom: '1rem' }}>
-                  <strong>Matchup {index + 1}:</strong>
-                  {matchup.player1_partner && matchup.player2_partner ? (
-                    <span>
-                      {matchup.player1.name} & {matchup.player1_partner.name} vs{' '}
-                      {matchup.player2.name} & {matchup.player2_partner.name}
-                    </span>
-                  ) : (
-                    <span>
-                      {matchup.player1.name} vs {matchup.player2.name}
-                    </span>
-                  )}
-                  {editingScore[matchup.id] ? (
-                    <div>
-                      <input
-                        type="text"
-                        value={scoreInput[matchup.id] || ''}
-                        onChange={(e) =>
-                          handleScoreChange(matchup.id, e.target.value)
-                        }
-                      />
-                      <button onClick={() => handleSubmitScore(matchup.id)}>
-                        Submit
-                      </button>
-                      <div>
-                        <label htmlFor={`winner-select-${matchup.id}`}>
-                          Select Winner:
-                        </label>
-                        <select
-                          id={`winner-select-${matchup.id}`}
-                          value={matchup.winner?.id || ''}
-                          onChange={(e) =>
-                            handleWinnerChange(
-                              matchup.id,
-                              parseInt(e.target.value),
-                            )
-                          }
-                        >
-                          <option value="">-- Select Winner --</option>
-                          <option value={matchup.player1.id}>
-                            {matchup.player1.name}
-                          </option>
-                          <option value={matchup.player2.id}>
-                            {matchup.player2.name}
-                          </option>
-                          {matchup.player1_partner && (
-                            <option value={matchup.player1_partner.id}>
-                              {matchup.player1_partner.name}
-                            </option>
-                          )}
-                          {matchup.player2_partner && (
-                            <option value={matchup.player2_partner.id}>
-                              {matchup.player2_partner.name}
-                            </option>
-                          )}
-                        </select>
-                      </div>
-                    </div>
-                  ) : (
-                    <button onClick={() => handleEditScore(matchup.id)}>
-                      Edit Score
-                    </button>
-                  )}
-                  <div
-                    style={{
-                      display: 'flex',
-                      flexDirection: 'row',
-                      gap: '1rem',
-                    }}
-                  >
-                    {matchup.winner && (
-                      <p>
-                        <strong>Winner:</strong> {matchup.winner.name}
-                      </p>
-                    )}
-                    {matchup.score && (
-                      <p>
-                        <strong>Score:</strong> {matchup.score}
-                      </p>
-                    )}
-                  </div>
-                </div>
-              ))}
-            </div>
-          ))} */}
-        </DialogContent>
-        <DialogActions>
-          <Button onClick={handleCloseModal} color="primary">
-            Close
-          </Button>
-        </DialogActions>
-      </Dialog>
     </div>
   )
 }

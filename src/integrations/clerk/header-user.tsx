@@ -1,6 +1,8 @@
 import Loader from '@/components/Loader'
 import { signOutUser, useCurrentUser } from '@/db/users'
-import { Button, Link, Typography } from '@mui/material'
+import { Tooltip, IconButton } from '@mui/material'
+import { Link } from '@tanstack/react-router'
+import { LogIn, LogOut, User } from 'lucide-react'
 
 export default function HeaderUser() {
   const { isSignedIn, userData, isLoaded } = useCurrentUser()
@@ -14,40 +16,40 @@ export default function HeaderUser() {
     }
   }
 
-  // const supabase = createSupabaseClient()
-  // const { data: subscription } = supabase.auth.onAuthStateChange(
-  //   (event, session) => {
-  //     if (event === 'SIGNED_IN' || event === 'SIGNED_OUT') {
-  //       setChange((prev) => prev + 1)
-  //     }
-  //   },
-  // )
-
   if (!isLoaded) {
     return <Loader />
   }
 
   if (!isSignedIn) {
     return (
-      <Link href="/login/" style={{ flex: 1 }}>
-        <Button variant="contained" fullWidth>
-          Sign In
-        </Button>
-      </Link>
+      <Tooltip title="Sign In" arrow>
+        <Link to="/login">
+          <IconButton sx={{ color: 'white' }} aria-label="Sign In">
+            <LogIn size={22} />
+          </IconButton>
+        </Link>
+      </Tooltip>
     )
   }
 
   return (
-    <>
-      <Typography variant="h6" style={{ marginRight: '16px' }}>
-        Signed in as: {userData?.name}
-      </Typography>
-      <Button
-        className="bg-gray-500 text-white rounded"
-        onClick={handleSignOut}
-      >
-        Sign Out
-      </Button>
-    </>
+    <div className="flex items-center gap-1">
+      <Tooltip title={`Account: ${userData?.name ?? ''}`} arrow>
+        <Link to="/account">
+          <IconButton sx={{ color: 'white' }} aria-label="My Account">
+            <User size={22} />
+          </IconButton>
+        </Link>
+      </Tooltip>
+      <Tooltip title="Sign Out" arrow>
+        <IconButton
+          sx={{ color: 'white' }}
+          aria-label="Sign Out"
+          onClick={handleSignOut}
+        >
+          <LogOut size={22} />
+        </IconButton>
+      </Tooltip>
+    </div>
   )
 }

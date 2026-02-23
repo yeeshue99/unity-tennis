@@ -1,5 +1,19 @@
 import { createSupabaseClient } from './db'
 
+export const createBracket = async (name: string, tournamentId: number) => {
+  const supabase = createSupabaseClient()
+  const response = await supabase
+    .from('brackets')
+    .insert({ name, tournament_id: tournamentId, status: 'PENDING' })
+    .select()
+    .single()
+
+  if (!response.status || response.error) {
+    throw new Error('Failed to create bracket')
+  }
+  return response.data
+}
+
 export const getBracketStatus = async (bracket_id: number) => {
   const supabase = createSupabaseClient()
   const response = await supabase

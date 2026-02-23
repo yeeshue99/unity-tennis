@@ -1,7 +1,9 @@
 import React from 'react'
-import { FormControl, InputLabel, MenuItem, Select } from '@mui/material'
+import { FormControl, InputLabel, MenuItem } from '@mui/material'
+import { ThemedSelect } from '@/components/ThemedSelect'
 import { useQuery } from '@tanstack/react-query'
 import type { SelectChangeEvent } from '@mui/material'
+import { fetchTournaments } from '@/db/tournaments'
 
 interface Tournament {
   id: number
@@ -13,22 +15,6 @@ interface TournamentDropdownProps {
   onTournamentChange: (tournamentId: number | null) => void
 }
 
-const TEST_DATA: Tournament[] = [
-  {
-    id: 1,
-    name: '2026 Adult League Jan',
-  },
-  {
-    id: 2,
-    name: '2026 Adult League Mar',
-  },
-  {
-    id: 3,
-    name: '2026 Adult League May',
-  },
-  // Add more tournaments as needed
-]
-
 const TournamentDropdown: React.FC<TournamentDropdownProps> = ({
   selectedTournament,
   onTournamentChange,
@@ -39,14 +25,7 @@ const TournamentDropdown: React.FC<TournamentDropdownProps> = ({
     isError,
   } = useQuery<Tournament[], Error>({
     queryKey: ['tournaments'],
-    queryFn: async () => {
-      // const response = await fetch(`${API_BASE_URL}/tournaments`)
-      // if (!response.ok) {
-      //   throw new Error('Network response was not ok')
-      // }
-      // return response.json()
-      return TEST_DATA
-    },
+    queryFn: fetchTournaments as () => Promise<Tournament[]>,
   })
 
   const handleChange = (event: SelectChangeEvent<number | null>) => {
@@ -62,26 +41,23 @@ const TournamentDropdown: React.FC<TournamentDropdownProps> = ({
   }
 
   return (
-    <FormControl fullWidth>
-      <InputLabel id="tournament-dropdown-label">
-        Select a Tournament
-      </InputLabel>
-      <Select
-        labelId="tournament-dropdown-label"
-        id="tournament-dropdown"
-        value={selectedTournament}
-        onChange={handleChange}
-      >
-        <MenuItem value="">
-          <em>-- Select --</em>
+    <ThemedSelect
+      labelId="tournament-dropdown-label"
+      id="tournament-dropdown"
+      value={selectedTournament}
+      label="Select a Tournament"
+      // @ts-expect-error TS2322: ThemedSelect onChange type doesn't match SelectChangeEvent<number|null>
+      onChange={handleChange}
+    >
+      <MenuItem value="">
+        <em>-- Select --</em>
+      </MenuItem>
+      {tournaments.map((tournament: Tournament) => (
+        <MenuItem key={tournament.id} value={tournament.id}>
+          {tournament.name}
         </MenuItem>
-        {tournaments.map((tournament: Tournament) => (
-          <MenuItem key={tournament.id} value={tournament.id}>
-            {tournament.name}
-          </MenuItem>
-        ))}
-      </Select>
-    </FormControl>
+      ))}
+    </ThemedSelect>
   )
 }
 

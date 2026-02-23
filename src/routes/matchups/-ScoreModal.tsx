@@ -79,7 +79,8 @@ const ScoreModal: React.FC<ScoreModalProps> = ({
     >
       <div
         style={{
-          backgroundColor: 'white',
+          backgroundColor: 'var(--color-surface)',
+          color: 'var(--color-text)',
           padding: '2rem',
           borderRadius: '8px',
           width: '600px',
@@ -139,9 +140,11 @@ const ScoreModal: React.FC<ScoreModalProps> = ({
               width: '100%',
               padding: '0.5rem',
               marginBottom: '1rem',
-              border: '1px solid #ccc',
+              border: '1px solid var(--color-border)',
               borderRadius: '4px',
               flex: '3',
+              backgroundColor: 'var(--color-surface)',
+              color: 'var(--color-text)',
             }}
           />
           <HorizontalRuleOutlinedIcon className="mx-auto my-2.5" />
@@ -153,9 +156,11 @@ const ScoreModal: React.FC<ScoreModalProps> = ({
               width: '100%',
               padding: '0.5rem',
               marginBottom: '1rem',
-              border: '1px solid #ccc',
+              border: '1px solid var(--color-border)',
               borderRadius: '4px',
               flex: '3',
+              backgroundColor: 'var(--color-surface)',
+              color: 'var(--color-text)',
             }}
           />
           <input
@@ -166,8 +171,10 @@ const ScoreModal: React.FC<ScoreModalProps> = ({
               width: '100%',
               padding: '0.5rem',
               marginBottom: '1rem',
-              border: '1px solid #ccc',
+              border: '1px solid var(--color-border)',
               borderRadius: '4px',
+              backgroundColor: 'var(--color-surface)',
+              color: 'var(--color-text)',
             }}
           />
           <HorizontalRuleOutlinedIcon className="mx-auto my-2.5" />
@@ -179,8 +186,10 @@ const ScoreModal: React.FC<ScoreModalProps> = ({
               width: '100%',
               padding: '0.5rem',
               marginBottom: '1rem',
-              border: '1px solid #ccc',
+              border: '1px solid var(--color-border)',
               borderRadius: '4px',
+              backgroundColor: 'var(--color-surface)',
+              color: 'var(--color-text)',
             }}
           />
           <input
@@ -191,8 +200,10 @@ const ScoreModal: React.FC<ScoreModalProps> = ({
               width: '100%',
               padding: '0.5rem',
               marginBottom: '1rem',
-              border: '1px solid #ccc',
+              border: '1px solid var(--color-border)',
               borderRadius: '4px',
+              backgroundColor: 'var(--color-surface)',
+              color: 'var(--color-text)',
             }}
           />
           <HorizontalRuleOutlinedIcon className="mx-auto my-2.5" />
@@ -204,8 +215,10 @@ const ScoreModal: React.FC<ScoreModalProps> = ({
               width: '100%',
               padding: '0.5rem',
               marginBottom: '1rem',
-              border: '1px solid #ccc',
+              border: '1px solid var(--color-border)',
               borderRadius: '4px',
+              backgroundColor: 'var(--color-surface)',
+              color: 'var(--color-text)',
             }}
           />
         </div>
@@ -214,9 +227,9 @@ const ScoreModal: React.FC<ScoreModalProps> = ({
             onClick={onClose}
             style={{
               padding: '0.5rem 1rem',
-              backgroundColor: '#ccc',
-              color: 'black',
-              border: 'none',
+              backgroundColor: 'var(--color-surface-2)',
+              color: 'var(--color-text)',
+              border: '1px solid var(--color-border)',
               borderRadius: '4px',
               cursor: 'pointer',
             }}
@@ -227,7 +240,7 @@ const ScoreModal: React.FC<ScoreModalProps> = ({
             onClick={handleSave}
             style={{
               padding: '0.5rem 1rem',
-              backgroundColor: '#007bff',
+              backgroundColor: 'var(--color-primary)',
               color: 'white',
               border: 'none',
               borderRadius: '4px',

@@ -40,7 +40,7 @@ function App() {
         <h1 className="text-4xl font-extrabold mb-4">
           Isaac Yarell — Tennis Coach
         </h1>
-        <p className="text-lg text-slate-600 mb-6">
+        <p className="text-lg text-(--color-text-muted) mb-6">
           Isaac Yarell is a passionate tennis coach and the director of UnITY
           Tennis, Merced’s only year-round public tennis program. With a mission
           to make tennis accessible to everyone, Isaac offers personalized
@@ -48,14 +48,14 @@ function App() {
         </p>
         <div className="flex justify-center gap-4">
           <a
-            className="bg-cyan-600 text-white px-6 py-3 rounded-md hover:bg-cyan-500"
+            className="bg-(--color-primary) text-white px-6 py-3 rounded-md hover:bg-(--color-primary-hover) transition-colors"
             href="mailto:yarrelltennis@gmail.com?subject=Coaching%20Inquiry"
           >
             Contact Isaac
           </a>
           <Link
             to="/tournaments"
-            className="border border-slate-200 px-6 py-3 rounded-md hover:bg-slate-50"
+            className="border border-(--color-border) text-(--color-text) px-6 py-3 rounded-md hover:bg-(--color-surface-2) transition-colors"
           >
             View Local Leagues!
           </Link>
@@ -64,21 +64,21 @@ function App() {
 
       <section id="about" className="mb-10">
         <h2 className="text-2xl font-semibold mb-3">About Isaac</h2>
-        <p className="text-slate-600">
+        <p className="text-(--color-text-muted)">
           Isaac Yarell began playing tennis at the age of six, inspired by his
           father. Growing up in a challenging neighborhood in Cincinnati, tennis
           provided him with a safe haven and a sense of community. He went on to
           gain national exposure, compete in state finals, and play throughout
           college, visiting 39 states in the process. After serving as the
           Tennis Director at Concourse Athletic Club in Atlanta, Isaac moved to
-          Merced six years ago to pursue his passion for tennis and community
+          Merced in 2016 to pursue his passion for tennis and community
           engagement.
         </p>
       </section>
 
       <section id="services" className="mb-10">
         <h2 className="text-2xl font-semibold mb-3">Coaching Services</h2>
-        <ul className="space-y-4 text-slate-700">
+        <ul className="space-y-4 text-(--color-text-muted)">
           <li>
             <strong>Adult Beginner Classes:</strong> Sundays, 9AM to 10AM, $15
             per class.
@@ -133,10 +133,12 @@ function App() {
           {testimonials.map((testimonial, index) => (
             <div
               key={index}
-              className="p-6 bg-gray-100 rounded-lg shadow-md text-center"
+              className="p-6 bg-(--color-surface-2) border border-(--color-border) rounded-lg shadow-md text-center"
             >
-              <p className="text-slate-600 italic">"{testimonial.text}"</p>
-              <p className="text-slate-500 mt-4">— {testimonial.author}</p>
+              <p className="text-(--color-text-muted) italic">
+                "{testimonial.text}"
+              </p>
+              <p className="text-(--color-text) mt-4">— {testimonial.author}</p>
             </div>
           ))}
         </SwipeableViews>
@@ -144,7 +146,7 @@ function App() {
 
       <section id="contact" className="mb-10">
         <h2 className="text-2xl font-semibold mb-3">Get Started</h2>
-        <p className="text-slate-600 mb-4">
+        <p className="text-(--color-text-muted) mb-4">
           Schedule a trial lesson or ask questions.
         </p>
         <form
@@ -165,28 +167,28 @@ function App() {
           <input
             name="name"
             placeholder="Your name"
-            className="border px-3 py-2 rounded"
+            className="border border-(--color-border) bg-(--color-surface) text-(--color-text) placeholder:text-(--color-text-muted) px-3 py-2 rounded"
           />
           <input
             name="email"
             placeholder="Your email"
-            className="border px-3 py-2 rounded"
+            className="border border-(--color-border) bg-(--color-surface) text-(--color-text) placeholder:text-(--color-text-muted) px-3 py-2 rounded"
           />
           <textarea
             name="message"
             rows={4}
             placeholder="Message"
-            className="border px-3 py-2 rounded"
+            className="border border-(--color-border) bg-(--color-surface) text-(--color-text) placeholder:text-(--color-text-muted) px-3 py-2 rounded"
           />
           <div>
-            <button className="bg-cyan-600 text-white px-4 py-2 rounded">
+            <button className="bg-(--color-primary) hover:bg-(--color-primary-hover) text-white px-4 py-2 rounded transition-colors">
               Send
             </button>
           </div>
         </form>
       </section>
 
-      <footer className="text-sm text-slate-500 mt-12">
+      <footer className="text-sm text-(--color-text-muted) mt-12">
         © Isaac Yarell Coaching
       </footer>
     </main>

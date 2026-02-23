@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react'
 import { createSupabaseClient } from './db'
-import { UserResponse } from '@supabase/supabase-js'
+import { User, UserResponse } from '@supabase/supabase-js'
 import { Player } from './players'
 
 export async function registerUser(email: string, password: string) {
@@ -60,7 +60,7 @@ export const fetchUserData = async (supabaseId: string) => {
 }
 
 export function useCurrentUser() {
-  const [user, setUser] = useState<UserResponse | null>(null)
+  const [user, setUser] = useState<User | null>(null)
   const [userData, setUserData] = useState<Player | null>(null)
   const [isSignedIn, setIsSignedIn] = useState(false)
   const [isLoaded, setIsLoaded] = useState(false)
@@ -82,7 +82,7 @@ export function useCurrentUser() {
         const userData = user ? await fetchUserData(user.id) : null
 
         if (!cancelled) {
-          setUser(user as UserResponse | null)
+          setUser(user as User | null)
           setUserData(userData)
           setIsSignedIn(!!user)
           setIsAdmin(userData?.isAdmin || false)

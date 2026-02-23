@@ -3,9 +3,9 @@ import {
   FormControl,
   InputLabel,
   MenuItem,
-  Select,
   type SelectChangeEvent,
 } from '@mui/material'
+import { ThemedSelect } from '@/components/ThemedSelect'
 import { useQuery } from '@tanstack/react-query'
 import { fetchBracketsForTournament } from '@/db/brackets'
 
@@ -57,25 +57,24 @@ const BracketDropdown: React.FC<BracketDropdownProps> = ({
   }
 
   return (
-    <FormControl fullWidth disabled={disabled}>
-      <InputLabel id="bracket-dropdown-label">Select a Bracket</InputLabel>
-      <Select
-        labelId="bracket-dropdown-label"
-        id="bracket-dropdown"
-        value={selectedBracket}
-        onChange={handleChange}
-        style={{ marginBottom: '1rem' }}
-      >
-        <MenuItem value="">
-          <em>-- Select --</em>
+    <ThemedSelect
+      labelId="bracket-dropdown-label"
+      id="bracket-dropdown"
+      value={selectedBracket}
+      label="Select a Bracket"
+      // @ts-expect-error TS2322: ThemedSelect onChange type doesn't match SelectChangeEvent<number|null>
+      onChange={handleChange}
+      style={{ marginBottom: '1rem' }}
+    >
+      <MenuItem value="">
+        <em>-- Select --</em>
+      </MenuItem>
+      {brackets.map((bracket) => (
+        <MenuItem key={bracket.id} value={bracket.id}>
+          {bracket.name}
         </MenuItem>
-        {brackets.map((bracket) => (
-          <MenuItem key={bracket.id} value={bracket.id}>
-            {bracket.name}
-          </MenuItem>
-        ))}
-      </Select>
-    </FormControl>
+      ))}
+    </ThemedSelect>
   )
 }
 

@@ -1,6 +1,20 @@
 import { createSupabaseClient } from '@/db/db'
 import { MatchupStatus } from './matchups'
 
+export const createTournament = async (name: string, format: string) => {
+  const supabase = createSupabaseClient()
+  const response = await supabase
+    .from('tournaments')
+    .insert({ name, format, status: MatchupStatus.PENDING, current_round: 1 })
+    .select()
+    .single()
+
+  if (!response.status || response.error) {
+    throw new Error('Failed to create tournament')
+  }
+  return response.data
+}
+
 export const fetchTournaments = async () => {
   const supabase = createSupabaseClient()
   const response = await supabase

@@ -97,6 +97,46 @@ function Tournaments() {
           pageSizeOptions={[10, 25, 50]}
           initialState={{ pagination: { paginationModel: { pageSize: 10 } } }}
           disableRowSelectionOnClick
+          sx={{
+            backgroundColor: 'var(--color-surface)',
+            color: 'var(--color-text)',
+            borderColor: 'var(--color-border)',
+            '& .MuiDataGrid-columnHeader': {
+              backgroundColor: 'var(--color-header-bg)',
+              color: 'var(--color-header-text)',
+            },
+            '& .MuiDataGrid-columnHeader .MuiSvgIcon-root': {
+              color: 'var(--color-header-text)',
+              fill: 'var(--color-header-text)',
+            },
+            '& .MuiDataGrid-columnHeader .MuiIconButton-root': {
+              color: 'var(--color-header-text)',
+            },
+            '& .MuiDataGrid-cell': {
+              borderColor: 'var(--color-border)',
+              color: 'var(--color-text)',
+            },
+            '& .MuiDataGrid-row:nth-of-type(even)': {
+              backgroundColor: 'var(--color-surface-2)',
+            },
+            '& .MuiDataGrid-row:hover': {
+              backgroundColor: 'var(--color-surface-2) !important',
+            },
+            '& .MuiDataGrid-footerContainer': {
+              backgroundColor: 'var(--color-surface)',
+              borderColor: 'var(--color-border)',
+              color: 'var(--color-text)',
+            },
+            '& .MuiDataGrid-footerContainer .MuiIconButton-root': {
+              color: 'var(--color-text)',
+            },
+            '& .MuiTablePagination-root': {
+              color: 'var(--color-text)',
+            },
+            '& .MuiDataGrid-filler': {
+              backgroundColor: 'var(--color-surface)',
+            },
+          }}
         />
       </div>
     </div>

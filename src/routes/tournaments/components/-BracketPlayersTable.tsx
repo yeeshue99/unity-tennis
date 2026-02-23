@@ -215,6 +215,46 @@ const BracketPlayersTable: React.FC<BracketPlayersTableProps> = ({
           columns={columns}
           pageSizeOptions={[5]}
           initialState={{ pagination: { paginationModel: { pageSize: 5 } } }}
+          sx={{
+            backgroundColor: 'var(--color-surface)',
+            color: 'var(--color-text)',
+            borderColor: 'var(--color-border)',
+            '& .MuiDataGrid-columnHeader': {
+              backgroundColor: 'var(--color-header-bg)',
+              color: 'var(--color-header-text)',
+            },
+            '& .MuiDataGrid-columnHeader .MuiSvgIcon-root': {
+              color: 'var(--color-header-bg)',
+              fill: 'var(--color-primary-contrast)',
+            },
+            '& .MuiDataGrid-columnHeader .MuiIconButton-root': {
+              color: 'var(--color-header-text)',
+            },
+            '& .MuiDataGrid-cell': {
+              borderColor: 'var(--color-border)',
+              color: 'var(--color-text)',
+            },
+            '& .MuiDataGrid-row:nth-of-type(even)': {
+              backgroundColor: 'var(--color-surface-2)',
+            },
+            '& .MuiDataGrid-row:hover': {
+              backgroundColor: 'var(--color-surface-2) !important',
+            },
+            '& .MuiDataGrid-footerContainer': {
+              backgroundColor: 'var(--color-surface)',
+              borderColor: 'var(--color-border)',
+              color: 'var(--color-text)',
+            },
+            '& .MuiDataGrid-footerContainer .MuiIconButton-root': {
+              color: 'var(--color-text)',
+            },
+            '& .MuiTablePagination-root': {
+              color: 'var(--color-text)',
+            },
+            '& .MuiDataGrid-filler': {
+              backgroundColor: 'var(--color-surface)',
+            },
+          }}
         />
       </div>
 
@@ -238,6 +278,7 @@ const BracketPlayersTable: React.FC<BracketPlayersTableProps> = ({
             display: 'flex',
             flexDirection: 'row',
             justifyContent: 'flex-start',
+            gap: '1rem',
           }}
         >
           <Autocomplete
@@ -245,10 +286,46 @@ const BracketPlayersTable: React.FC<BracketPlayersTableProps> = ({
             getOptionLabel={(option) => option.name}
             value={selectedPlayer}
             onChange={handlePlayerChange}
-            renderInput={(params) => (
-              <TextField {...params} label="Add Player" variant="outlined" />
-            )}
             style={{ marginBottom: '1rem', flex: 1 }}
+            slotProps={{
+              paper: {
+                sx: {
+                  backgroundColor: 'var(--color-surface)',
+                  color: 'var(--color-text)',
+                  border: '1px solid var(--color-border)',
+                  '& .MuiAutocomplete-option:hover': {
+                    backgroundColor: 'var(--color-surface-2)',
+                  },
+                  '& .MuiAutocomplete-option[aria-selected="true"]': {
+                    backgroundColor:
+                      'color-mix(in srgb, var(--color-primary) 20%, var(--color-surface))',
+                  },
+                },
+              },
+            }}
+            renderInput={(params) => (
+              <TextField
+                {...params}
+                label="Add Player"
+                variant="outlined"
+                sx={{
+                  '& .MuiOutlinedInput-root': {
+                    color: 'var(--color-text)',
+                    backgroundColor: 'var(--color-surface)',
+                    '& fieldset': { borderColor: 'var(--color-border)' },
+                    '&:hover fieldset': { borderColor: 'var(--color-primary)' },
+                    '&.Mui-focused fieldset': {
+                      borderColor: 'var(--color-primary)',
+                    },
+                  },
+                  '& .MuiInputLabel-root': { color: 'var(--color-text-muted)' },
+                  '& .MuiInputLabel-root.Mui-focused': {
+                    color: 'var(--color-primary)',
+                  },
+                  '& .MuiSvgIcon-root': { color: 'var(--color-text)' },
+                }}
+              />
+            )}
           />
 
           {

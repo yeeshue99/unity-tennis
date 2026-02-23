@@ -18,6 +18,7 @@ import { Route as SignUpSuccessIndexRouteImport } from './routes/sign-up-success
 import { Route as MatchupsIndexRouteImport } from './routes/matchups/index'
 import { Route as LoginIndexRouteImport } from './routes/login/index'
 import { Route as ForgotPasswordIndexRouteImport } from './routes/forgot-password/index'
+import { Route as AccountIndexRouteImport } from './routes/account/index'
 import { Route as TournamentsTournamentIdRouteImport } from './routes/tournaments/$tournamentId'
 import { Route as DemoTanstackQueryRouteImport } from './routes/demo/tanstack-query'
 import { Route as DemoTableRouteImport } from './routes/demo/table'
@@ -82,6 +83,11 @@ const LoginIndexRoute = LoginIndexRouteImport.update({
 const ForgotPasswordIndexRoute = ForgotPasswordIndexRouteImport.update({
   id: '/forgot-password/',
   path: '/forgot-password/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AccountIndexRoute = AccountIndexRouteImport.update({
+  id: '/account/',
+  path: '/account/',
   getParentRoute: () => rootRouteImport,
 } as any)
 const TournamentsTournamentIdRoute = TournamentsTournamentIdRouteImport.update({
@@ -196,6 +202,7 @@ export interface FileRoutesByFullPath {
   '/demo/table': typeof DemoTableRoute
   '/demo/tanstack-query': typeof DemoTanstackQueryRoute
   '/tournaments/$tournamentId': typeof TournamentsTournamentIdRoute
+  '/account/': typeof AccountIndexRoute
   '/forgot-password/': typeof ForgotPasswordIndexRoute
   '/login/': typeof LoginIndexRoute
   '/matchups/': typeof MatchupsIndexRoute
@@ -227,6 +234,7 @@ export interface FileRoutesByTo {
   '/demo/table': typeof DemoTableRoute
   '/demo/tanstack-query': typeof DemoTanstackQueryRoute
   '/tournaments/$tournamentId': typeof TournamentsTournamentIdRoute
+  '/account': typeof AccountIndexRoute
   '/forgot-password': typeof ForgotPasswordIndexRoute
   '/login': typeof LoginIndexRoute
   '/matchups': typeof MatchupsIndexRoute
@@ -259,6 +267,7 @@ export interface FileRoutesById {
   '/demo/table': typeof DemoTableRoute
   '/demo/tanstack-query': typeof DemoTanstackQueryRoute
   '/tournaments/$tournamentId': typeof TournamentsTournamentIdRoute
+  '/account/': typeof AccountIndexRoute
   '/forgot-password/': typeof ForgotPasswordIndexRoute
   '/login/': typeof LoginIndexRoute
   '/matchups/': typeof MatchupsIndexRoute
@@ -292,6 +301,7 @@ export interface FileRouteTypes {
     | '/demo/table'
     | '/demo/tanstack-query'
     | '/tournaments/$tournamentId'
+    | '/account/'
     | '/forgot-password/'
     | '/login/'
     | '/matchups/'
@@ -323,6 +333,7 @@ export interface FileRouteTypes {
     | '/demo/table'
     | '/demo/tanstack-query'
     | '/tournaments/$tournamentId'
+    | '/account'
     | '/forgot-password'
     | '/login'
     | '/matchups'
@@ -354,6 +365,7 @@ export interface FileRouteTypes {
     | '/demo/table'
     | '/demo/tanstack-query'
     | '/tournaments/$tournamentId'
+    | '/account/'
     | '/forgot-password/'
     | '/login/'
     | '/matchups/'
@@ -386,6 +398,7 @@ export interface RootRouteChildren {
   DemoTableRoute: typeof DemoTableRoute
   DemoTanstackQueryRoute: typeof DemoTanstackQueryRoute
   TournamentsTournamentIdRoute: typeof TournamentsTournamentIdRoute
+  AccountIndexRoute: typeof AccountIndexRoute
   ForgotPasswordIndexRoute: typeof ForgotPasswordIndexRoute
   LoginIndexRoute: typeof LoginIndexRoute
   MatchupsIndexRoute: typeof MatchupsIndexRoute
@@ -471,6 +484,13 @@ declare module '@tanstack/react-router' {
       path: '/forgot-password'
       fullPath: '/forgot-password/'
       preLoaderRoute: typeof ForgotPasswordIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/account/': {
+      id: '/account/'
+      path: '/account'
+      fullPath: '/account/'
+      preLoaderRoute: typeof AccountIndexRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/tournaments/$tournamentId': {
@@ -626,6 +646,7 @@ const rootRouteChildren: RootRouteChildren = {
   DemoTableRoute: DemoTableRoute,
   DemoTanstackQueryRoute: DemoTanstackQueryRoute,
   TournamentsTournamentIdRoute: TournamentsTournamentIdRoute,
+  AccountIndexRoute: AccountIndexRoute,
   ForgotPasswordIndexRoute: ForgotPasswordIndexRoute,
   LoginIndexRoute: LoginIndexRoute,
   MatchupsIndexRoute: MatchupsIndexRoute,

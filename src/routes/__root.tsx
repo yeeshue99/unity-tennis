@@ -7,6 +7,8 @@ import { TanStackRouterDevtoolsPanel } from '@tanstack/react-router-devtools'
 import { TanStackDevtools } from '@tanstack/react-devtools'
 
 import Header from '../components/Header'
+import { ThemeProvider } from '../lib/theme-context'
+import { ThemeProvider as MuiThemeProvider } from '@mui/material/styles'
 
 import TanStackQueryDevtools from '../integrations/tanstack-query/devtools'
 
@@ -56,21 +58,23 @@ function RootDocument({ children }: { children: React.ReactNode }) {
       </head>
       <body>
         <ClerkProvider>
-          <Header />
-          {children}
-          <TanStackDevtools
-            config={{
-              position: 'bottom-right',
-            }}
-            plugins={[
-              {
-                name: 'Tanstack Router',
-                render: <TanStackRouterDevtoolsPanel />,
-              },
-              TanStackQueryDevtools,
-              StoreDevtools,
-            ]}
-          />
+          <ThemeProvider>
+            <Header />
+            {children}
+            <TanStackDevtools
+              config={{
+                position: 'bottom-right',
+              }}
+              plugins={[
+                {
+                  name: 'Tanstack Router',
+                  render: <TanStackRouterDevtoolsPanel />,
+                },
+                TanStackQueryDevtools,
+                StoreDevtools,
+              ]}
+            />
+          </ThemeProvider>
         </ClerkProvider>
         <Scripts />
       </body>

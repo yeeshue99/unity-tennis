@@ -17,6 +17,7 @@ import { getRoundsForBracket, updateMatchup } from '@/db/matchups'
 import { Select, MenuItem, InputLabel } from '@mui/material'
 import { useCurrentUser } from '@/db/users'
 import Loader from '@/components/Loader'
+import { ThemedSelect } from '@/components/ThemedSelect'
 
 type MATCHUP_SEARCH_PARAMS = {
   tournamentId: number | null
@@ -227,20 +228,20 @@ function RouteComponent() {
           marginBottom: '1rem',
         }}
       >
-        <InputLabel id="select-round-label">Round: </InputLabel>
-        <Select
+        <ThemedSelect
           labelId="select-round-label"
           label="Round: "
           value={selectedRound}
           onChange={(e) => setSelectedRound(Number(e.target.value))}
           style={{ padding: '0.25rem', borderRadius: 4 }}
+          formFullWidth={false}
         >
           {rounds.map((r) => (
             <MenuItem key={r} value={r}>
               {r}
             </MenuItem>
           ))}
-        </Select>
+        </ThemedSelect>
       </div>
       <div
         style={{
@@ -253,13 +254,15 @@ function RouteComponent() {
           <div
             key={matchup.id}
             style={{
-              border: '1px solid #ccc',
+              border: '1px solid var(--color-border)',
               borderRadius: '8px',
               padding: '1rem',
               display: 'flex',
               justifyContent: 'space-between',
+              backgroundColor: matchup.winner_id
+                ? 'color-mix(in srgb, var(--color-primary) 25%, var(--color-surface))'
+                : 'var(--color-surface)',
             }}
-            className={matchup.winner_id ? 'bg-green-300' : ''}
           >
             <div>
               <p>
@@ -318,7 +321,7 @@ function RouteComponent() {
                 onClick={() => setScore(matchup.id)}
                 style={{
                   padding: '0.5rem 1rem',
-                  backgroundColor: '#007bff',
+                  backgroundColor: 'var(--color-primary)',
                   color: 'white',
                   border: 'none',
                   borderRadius: '4px',

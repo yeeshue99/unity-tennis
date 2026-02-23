@@ -1,4 +1,4 @@
-import { encrypt } from '@/cryptography/cryptography'
+import { decrypt, encrypt } from '@/cryptography/cryptography'
 import { createSupabaseClient, useSupabaseClient } from '@/db/db'
 import { MatchupStatus } from './matchups'
 import { getBracketStatus } from './brackets'
@@ -42,6 +42,44 @@ export type MatchupDetails = Matchup & {
   player2: Player | null
   player1Partner: Player | null
   player2Partner: Player | null
+}
+
+export const fetchAllPlayersAdmin = async () => {
+  const supabase = createSupabaseClient()
+  const response = await supabase
+    .from('players')
+    .select('id, name, gender, phone_number, supabase_id, isAdmin')
+    .neq('id', 0)
+    .order('name')
+
+  if (!response.status || response.error) {
+    throw new Error('Network response was not ok')
+  }
+
+  // Decrypt phone numbers before returning
+  const players = (response.data as unknown as Player[]).map((player) => ({
+    ...player,
+    phone_number: player.phone_number
+      ? decrypt(player.phone_number)
+      : undefined,
+  }))
+  return players
+}
+
+export const updatePlayerAdminStatus = async (
+  playerId: number,
+  isAdmin: boolean,
+) => {
+  const supabase = createSupabaseClient()
+  const response = await supabase
+    .from('players')
+    .update({ isAdmin })
+    .eq('id', playerId)
+
+  if (!response.status || response.error) {
+    throw new Error('Failed to update admin status')
+  }
+  return response.data
 }
 
 export const fetchAllPlayers = async (isAdmin: boolean) => {

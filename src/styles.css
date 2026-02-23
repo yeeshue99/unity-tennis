@@ -1,15 +1,146 @@
-@import "tailwindcss";
+@import 'tailwindcss';
+
+/* ─── Theme palettes ──────────────────────────────────────────── */
+:root,
+[data-theme='default'] {
+  --color-bg: #fefff3; /* off-white court */
+  --color-surface: #ffffff;
+  --color-surface-2: #eef5d8; /* light lime tint */
+  --color-border: #c6ed2c; /* tennis ball yellow-green */
+  --color-text: #111827; /* clay brown */
+  --color-text-muted: #336699; /* court blue */
+  --color-primary: #339966; /* court green */
+  --color-primary-hover: #2a7a52;
+  --color-header-bg: #336699; /* court blue */
+  --color-sidebar-bg: #f3f4f6; /* clay */
+  --color-header-text: #ffffff;
+  --color-primary-contrast: #111827;
+}
+
+[data-theme='dark'] {
+  --color-bg: #111827;
+  --color-surface: #1f2937;
+  --color-surface-2: #374151;
+  --color-border: #374151;
+  --color-text: #f9fafb;
+  --color-text-muted: #9ca3af;
+  --color-primary: #0891b2; /* cyan-600 */
+  --color-primary-hover: #0e7490;
+  --color-header-bg: #1f2937;
+  --color-sidebar-bg: #111827;
+  --color-header-text: #ffffff;
+  --color-primary-contrast: #f9fafb;
+}
+
+[data-theme='light'] {
+  --color-bg: #f9fafb;
+  --color-surface: #ffffff;
+  --color-surface-2: #f3f4f6;
+  --color-border: #d1d5db;
+  --color-text: #111827;
+  --color-text-muted: #6b7280;
+  --color-primary: #0891b2;
+  --color-primary-hover: #0e7490;
+  --color-header-bg: #e5e7eb;
+  --color-sidebar-bg: #f3f4f6;
+  --color-header-text: #111827;
+  --color-primary-contrast: #111827;
+}
+
+[data-theme='clay'] {
+  --color-bg: #fdf3ec; /* bleached terracotta white */
+  --color-surface: #fff8f4;
+  --color-surface-2: #f5ddd0; /* pale clay */
+  --color-border: #c6ed2c; /* tennis ball */
+  --color-text: #993300; /* deep clay */
+  --color-text-muted: #b85c38; /* mid clay */
+  --color-primary: #993300;
+  --color-primary-hover: #7a2800;
+  --color-header-bg: #993300; /* roland garros clay */
+  --color-sidebar-bg: #7a2800;
+  --color-header-text: #ffffff;
+  --color-primary-contrast: #fdf3ec;
+}
+
+[data-theme='grass'] {
+  --color-bg: #f4fdf4; /* wimbledon white */
+  --color-surface: #ffffff;
+  --color-surface-2: #e2f5e2; /* light grass */
+  --color-border: #c6ed2c; /* tennis ball */
+  --color-text: #111827; /* deep grass */
+  --color-text-muted: #336633;
+  --color-primary: #339966;
+  --color-primary-hover: #2a7a52;
+  --color-header-bg: #1a5c2a; /* wimbledon green */
+  --color-sidebar-bg: #14532d;
+  --color-header-text: #ffffff;
+  --color-primary-contrast: #f4fdf4;
+}
+
+[data-theme='hard'] {
+  --color-bg: #f0f4ff; /* us open off-white */
+  --color-surface: #ffffff;
+  --color-surface-2: #dce6f5; /* pale court blue */
+  --color-border: #c6ed2c; /* tennis ball */
+  --color-text: #1e3a5f; /* deep navy */
+  --color-text-muted: #336699;
+  --color-primary: #336699;
+  --color-primary-hover: #274f7a;
+  --color-header-bg: #336699; /* us open blue */
+  --color-sidebar-bg: #1e3a5f;
+  --color-header-text: #ffffff;
+  --color-primary-contrast: #f0f4ff;
+}
+
+/* ─── Apply palette to base elements ─────────────────────────── */
+html {
+  background-color: var(--color-bg);
+  color: var(--color-text);
+}
 
 body {
   @apply m-0;
-  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Roboto", "Oxygen",
-    "Ubuntu", "Cantarell", "Fira Sans", "Droid Sans", "Helvetica Neue",
-    sans-serif;
+  background-color: var(--color-bg);
+  color: var(--color-text);
+  font-family:
+    -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen', 'Ubuntu',
+    'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue', sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
 
 code {
-  font-family: source-code-pro, Menlo, Monaco, Consolas, "Courier New",
-    monospace;
+  font-family:
+    source-code-pro, Menlo, Monaco, Consolas, 'Courier New', monospace;
+}
+
+/* ─── Tailwind theme bridge ───────────────────────────────────── */
+@layer utilities {
+  .bg-theme-bg {
+    background-color: var(--color-bg);
+  }
+  .bg-theme-surface {
+    background-color: var(--color-surface);
+  }
+  .bg-theme-surface2 {
+    background-color: var(--color-surface-2);
+  }
+  .text-theme {
+    color: var(--color-text);
+  }
+  .text-theme-muted {
+    color: var(--color-text-muted);
+  }
+  .border-theme {
+    border-color: var(--color-border);
+  }
+  .bg-theme-primary {
+    background-color: var(--color-primary);
+  }
+  .bg-header {
+    background-color: var(--color-header-bg);
+  }
+  .bg-sidebar {
+    background-color: var(--color-sidebar-bg);
+  }
 }

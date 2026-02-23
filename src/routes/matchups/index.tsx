@@ -1,4 +1,4 @@
-import { createFileRoute, useNavigate } from '@tanstack/react-router'
+import { createFileRoute, useNavigate, Link } from '@tanstack/react-router'
 import TournamentDropdown from '../tournaments/components/-TournamentDropdown'
 import BracketDropdown from '../tournaments/components/-BracketDropdown'
 import { Bracket, IRoundProps } from '@oliverlooney/react-brackets'
@@ -220,6 +220,26 @@ function RouteComponent() {
       }}
     >
       <h2 className="text-2xl font-bold mb-4">Matchups</h2>
+      {tournamentId && (
+        <Link
+          to="/tournaments/$tournamentId"
+          search={(prev) => ({
+            bracketId: bracketId,
+          })}
+          params={{ tournamentId: String(tournamentId) }}
+          style={{
+            display: 'inline-flex',
+            alignItems: 'center',
+            gap: '0.25rem',
+            marginBottom: '1rem',
+            color: 'var(--color-text-muted)',
+            textDecoration: 'none',
+            fontSize: '0.875rem',
+          }}
+        >
+          ← Back to Tournament
+        </Link>
+      )}
       <div
         style={{
           display: 'flex',
@@ -233,7 +253,7 @@ function RouteComponent() {
           label="Round: "
           value={selectedRound}
           onChange={(e) => setSelectedRound(Number(e.target.value))}
-          style={{ padding: '0.25rem', borderRadius: 4 }}
+          style={{ padding: '0.25rem', borderRadius: 4, minWidth: 120 }}
           formFullWidth={false}
         >
           {rounds.map((r) => (

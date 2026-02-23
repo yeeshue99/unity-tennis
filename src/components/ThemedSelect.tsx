@@ -47,23 +47,34 @@ const themedMenuProps: SelectProps['MenuProps'] = {
 
 /**
  * A MUI Select pre-wired with the project's CSS-variable theme.
- * Accepts all standard Select props — sx and MenuProps are merged on top of
- * the defaults so callers can still override individual values if needed.
+ * - size is forwarded to both FormControl and Select.
+ * - labelId is auto-derived from label if not provided.
  */
 export function ThemedSelect({
   sx,
   MenuProps,
   formFullWidth = true,
+  size,
   ...props
 }: SelectProps & ThemedSelectProps) {
   return (
-    <FormControl fullWidth={formFullWidth} disabled={props.disabled}>
-      <InputLabel id={props.labelId} sx={{ color: 'var(--color-text)' }}>
+    <FormControl
+      fullWidth={formFullWidth}
+      disabled={props.disabled}
+      size={size}
+    >
+      <InputLabel
+        id={props.labelId}
+        sx={{
+          color: 'var(--color-text-muted)',
+          '&.Mui-focused': { color: 'var(--color-primary)' },
+        }}
+      >
         {props.label}
       </InputLabel>
       <Select
-        id={props.id}
         labelId={props.labelId}
+        size={size}
         sx={{ ...themedSx, ...(sx as object) }}
         MenuProps={{ ...themedMenuProps, ...MenuProps }}
         {...props}

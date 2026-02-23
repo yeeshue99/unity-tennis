@@ -91,6 +91,18 @@ export const fetchAllPlayers = async (isAdmin: boolean) => {
   if (!response.status || response.error) {
     throw new Error('Network response was not ok')
   }
+
+  if (isAdmin) {
+    // Decrypt phone numbers before returning
+    const players = (response.data as unknown as Player[]).map((player) => ({
+      ...player,
+      phone_number: player.phone_number
+        ? decrypt(player.phone_number)
+        : undefined,
+    }))
+    return players
+  }
+
   return response.data as unknown as Player[]
 }
 
@@ -219,6 +231,21 @@ export const fetchMatchupsForBracket = async (
 
     return response.data
   }
+}
+
+export const updateBracketPlayerPaid = async (
+  bracketPlayerId: number,
+  paid: boolean,
+) => {
+  const supabase = createSupabaseClient()
+  const response = await supabase
+    .from('bracket_players')
+    .update({ paid })
+    .eq('id', bracketPlayerId)
+  if (!response.status || response.error) {
+    throw new Error('Failed to update paid status')
+  }
+  return response.data
 }
 
 export const isPlayerInDb = async (supabaseId: string) => {

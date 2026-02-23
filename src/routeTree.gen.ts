@@ -9,7 +9,6 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
-import { Route as AdminRouteImport } from './routes/admin'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as UpdatePasswordIndexRouteImport } from './routes/update-password/index'
 import { Route as TournamentsIndexRouteImport } from './routes/tournaments/index'
@@ -18,6 +17,7 @@ import { Route as SignUpSuccessIndexRouteImport } from './routes/sign-up-success
 import { Route as MatchupsIndexRouteImport } from './routes/matchups/index'
 import { Route as LoginIndexRouteImport } from './routes/login/index'
 import { Route as ForgotPasswordIndexRouteImport } from './routes/forgot-password/index'
+import { Route as AdminIndexRouteImport } from './routes/admin/index'
 import { Route as AccountIndexRouteImport } from './routes/account/index'
 import { Route as TournamentsTournamentIdRouteImport } from './routes/tournaments/$tournamentId'
 import { Route as DemoTanstackQueryRouteImport } from './routes/demo/tanstack-query'
@@ -32,6 +32,7 @@ import { Route as DemoFormSimpleRouteImport } from './routes/demo/form.simple'
 import { Route as DemoFormAddressRouteImport } from './routes/demo/form.address'
 import { Route as DemoApiTqTodosRouteImport } from './routes/demo/api.tq-todos'
 import { Route as DemoApiNamesRouteImport } from './routes/demo/api.names'
+import { Route as AdminTournamentsTournamentIdRouteImport } from './routes/admin/tournaments/$tournamentId'
 import { Route as ProtectedAuthErrorRouteImport } from './routes/_protected/auth/error'
 import { Route as ProtectedAuthConfirmRouteImport } from './routes/_protected/auth/confirm'
 import { Route as ProtectedProtectedProtectedRouteImport } from './routes/_protected/_protected/protected'
@@ -40,11 +41,6 @@ import { Route as DemoStartSsrSpaModeRouteImport } from './routes/demo/start.ssr
 import { Route as DemoStartSsrFullSsrRouteImport } from './routes/demo/start.ssr.full-ssr'
 import { Route as DemoStartSsrDataOnlyRouteImport } from './routes/demo/start.ssr.data-only'
 
-const AdminRoute = AdminRouteImport.update({
-  id: '/admin',
-  path: '/admin',
-  getParentRoute: () => rootRouteImport,
-} as any)
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
@@ -83,6 +79,11 @@ const LoginIndexRoute = LoginIndexRouteImport.update({
 const ForgotPasswordIndexRoute = ForgotPasswordIndexRouteImport.update({
   id: '/forgot-password/',
   path: '/forgot-password/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AdminIndexRoute = AdminIndexRouteImport.update({
+  id: '/admin/',
+  path: '/admin/',
   getParentRoute: () => rootRouteImport,
 } as any)
 const AccountIndexRoute = AccountIndexRouteImport.update({
@@ -155,6 +156,12 @@ const DemoApiNamesRoute = DemoApiNamesRouteImport.update({
   path: '/demo/api/names',
   getParentRoute: () => rootRouteImport,
 } as any)
+const AdminTournamentsTournamentIdRoute =
+  AdminTournamentsTournamentIdRouteImport.update({
+    id: '/admin/tournaments/$tournamentId',
+    path: '/admin/tournaments/$tournamentId',
+    getParentRoute: () => rootRouteImport,
+  } as any)
 const ProtectedAuthErrorRoute = ProtectedAuthErrorRouteImport.update({
   id: '/_protected/auth/error',
   path: '/auth/error',
@@ -194,7 +201,6 @@ const DemoStartSsrDataOnlyRoute = DemoStartSsrDataOnlyRouteImport.update({
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
-  '/admin': typeof AdminRoute
   '/demo/clerk': typeof DemoClerkRoute
   '/demo/db-chat': typeof DemoDbChatRoute
   '/demo/db-chat-api': typeof DemoDbChatApiRoute
@@ -203,6 +209,7 @@ export interface FileRoutesByFullPath {
   '/demo/tanstack-query': typeof DemoTanstackQueryRoute
   '/tournaments/$tournamentId': typeof TournamentsTournamentIdRoute
   '/account/': typeof AccountIndexRoute
+  '/admin/': typeof AdminIndexRoute
   '/forgot-password/': typeof ForgotPasswordIndexRoute
   '/login/': typeof LoginIndexRoute
   '/matchups/': typeof MatchupsIndexRoute
@@ -213,6 +220,7 @@ export interface FileRoutesByFullPath {
   '/protected': typeof ProtectedProtectedProtectedRoute
   '/auth/confirm': typeof ProtectedAuthConfirmRoute
   '/auth/error': typeof ProtectedAuthErrorRoute
+  '/admin/tournaments/$tournamentId': typeof AdminTournamentsTournamentIdRoute
   '/demo/api/names': typeof DemoApiNamesRoute
   '/demo/api/tq-todos': typeof DemoApiTqTodosRoute
   '/demo/form/address': typeof DemoFormAddressRoute
@@ -226,7 +234,6 @@ export interface FileRoutesByFullPath {
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
-  '/admin': typeof AdminRoute
   '/demo/clerk': typeof DemoClerkRoute
   '/demo/db-chat': typeof DemoDbChatRoute
   '/demo/db-chat-api': typeof DemoDbChatApiRoute
@@ -235,6 +242,7 @@ export interface FileRoutesByTo {
   '/demo/tanstack-query': typeof DemoTanstackQueryRoute
   '/tournaments/$tournamentId': typeof TournamentsTournamentIdRoute
   '/account': typeof AccountIndexRoute
+  '/admin': typeof AdminIndexRoute
   '/forgot-password': typeof ForgotPasswordIndexRoute
   '/login': typeof LoginIndexRoute
   '/matchups': typeof MatchupsIndexRoute
@@ -245,6 +253,7 @@ export interface FileRoutesByTo {
   '/protected': typeof ProtectedProtectedProtectedRoute
   '/auth/confirm': typeof ProtectedAuthConfirmRoute
   '/auth/error': typeof ProtectedAuthErrorRoute
+  '/admin/tournaments/$tournamentId': typeof AdminTournamentsTournamentIdRoute
   '/demo/api/names': typeof DemoApiNamesRoute
   '/demo/api/tq-todos': typeof DemoApiTqTodosRoute
   '/demo/form/address': typeof DemoFormAddressRoute
@@ -259,7 +268,6 @@ export interface FileRoutesByTo {
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
-  '/admin': typeof AdminRoute
   '/demo/clerk': typeof DemoClerkRoute
   '/demo/db-chat': typeof DemoDbChatRoute
   '/demo/db-chat-api': typeof DemoDbChatApiRoute
@@ -268,6 +276,7 @@ export interface FileRoutesById {
   '/demo/tanstack-query': typeof DemoTanstackQueryRoute
   '/tournaments/$tournamentId': typeof TournamentsTournamentIdRoute
   '/account/': typeof AccountIndexRoute
+  '/admin/': typeof AdminIndexRoute
   '/forgot-password/': typeof ForgotPasswordIndexRoute
   '/login/': typeof LoginIndexRoute
   '/matchups/': typeof MatchupsIndexRoute
@@ -278,6 +287,7 @@ export interface FileRoutesById {
   '/_protected/_protected/protected': typeof ProtectedProtectedProtectedRoute
   '/_protected/auth/confirm': typeof ProtectedAuthConfirmRoute
   '/_protected/auth/error': typeof ProtectedAuthErrorRoute
+  '/admin/tournaments/$tournamentId': typeof AdminTournamentsTournamentIdRoute
   '/demo/api/names': typeof DemoApiNamesRoute
   '/demo/api/tq-todos': typeof DemoApiTqTodosRoute
   '/demo/form/address': typeof DemoFormAddressRoute
@@ -293,7 +303,6 @@ export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
     | '/'
-    | '/admin'
     | '/demo/clerk'
     | '/demo/db-chat'
     | '/demo/db-chat-api'
@@ -302,6 +311,7 @@ export interface FileRouteTypes {
     | '/demo/tanstack-query'
     | '/tournaments/$tournamentId'
     | '/account/'
+    | '/admin/'
     | '/forgot-password/'
     | '/login/'
     | '/matchups/'
@@ -312,6 +322,7 @@ export interface FileRouteTypes {
     | '/protected'
     | '/auth/confirm'
     | '/auth/error'
+    | '/admin/tournaments/$tournamentId'
     | '/demo/api/names'
     | '/demo/api/tq-todos'
     | '/demo/form/address'
@@ -325,7 +336,6 @@ export interface FileRouteTypes {
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
-    | '/admin'
     | '/demo/clerk'
     | '/demo/db-chat'
     | '/demo/db-chat-api'
@@ -334,6 +344,7 @@ export interface FileRouteTypes {
     | '/demo/tanstack-query'
     | '/tournaments/$tournamentId'
     | '/account'
+    | '/admin'
     | '/forgot-password'
     | '/login'
     | '/matchups'
@@ -344,6 +355,7 @@ export interface FileRouteTypes {
     | '/protected'
     | '/auth/confirm'
     | '/auth/error'
+    | '/admin/tournaments/$tournamentId'
     | '/demo/api/names'
     | '/demo/api/tq-todos'
     | '/demo/form/address'
@@ -357,7 +369,6 @@ export interface FileRouteTypes {
   id:
     | '__root__'
     | '/'
-    | '/admin'
     | '/demo/clerk'
     | '/demo/db-chat'
     | '/demo/db-chat-api'
@@ -366,6 +377,7 @@ export interface FileRouteTypes {
     | '/demo/tanstack-query'
     | '/tournaments/$tournamentId'
     | '/account/'
+    | '/admin/'
     | '/forgot-password/'
     | '/login/'
     | '/matchups/'
@@ -376,6 +388,7 @@ export interface FileRouteTypes {
     | '/_protected/_protected/protected'
     | '/_protected/auth/confirm'
     | '/_protected/auth/error'
+    | '/admin/tournaments/$tournamentId'
     | '/demo/api/names'
     | '/demo/api/tq-todos'
     | '/demo/form/address'
@@ -390,7 +403,6 @@ export interface FileRouteTypes {
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
-  AdminRoute: typeof AdminRoute
   DemoClerkRoute: typeof DemoClerkRoute
   DemoDbChatRoute: typeof DemoDbChatRoute
   DemoDbChatApiRoute: typeof DemoDbChatApiRoute
@@ -399,6 +411,7 @@ export interface RootRouteChildren {
   DemoTanstackQueryRoute: typeof DemoTanstackQueryRoute
   TournamentsTournamentIdRoute: typeof TournamentsTournamentIdRoute
   AccountIndexRoute: typeof AccountIndexRoute
+  AdminIndexRoute: typeof AdminIndexRoute
   ForgotPasswordIndexRoute: typeof ForgotPasswordIndexRoute
   LoginIndexRoute: typeof LoginIndexRoute
   MatchupsIndexRoute: typeof MatchupsIndexRoute
@@ -409,6 +422,7 @@ export interface RootRouteChildren {
   ProtectedProtectedProtectedRoute: typeof ProtectedProtectedProtectedRoute
   ProtectedAuthConfirmRoute: typeof ProtectedAuthConfirmRoute
   ProtectedAuthErrorRoute: typeof ProtectedAuthErrorRoute
+  AdminTournamentsTournamentIdRoute: typeof AdminTournamentsTournamentIdRoute
   DemoApiNamesRoute: typeof DemoApiNamesRoute
   DemoApiTqTodosRoute: typeof DemoApiTqTodosRoute
   DemoFormAddressRoute: typeof DemoFormAddressRoute
@@ -423,13 +437,6 @@ export interface RootRouteChildren {
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
-    '/admin': {
-      id: '/admin'
-      path: '/admin'
-      fullPath: '/admin'
-      preLoaderRoute: typeof AdminRouteImport
-      parentRoute: typeof rootRouteImport
-    }
     '/': {
       id: '/'
       path: '/'
@@ -484,6 +491,13 @@ declare module '@tanstack/react-router' {
       path: '/forgot-password'
       fullPath: '/forgot-password/'
       preLoaderRoute: typeof ForgotPasswordIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/admin/': {
+      id: '/admin/'
+      path: '/admin'
+      fullPath: '/admin/'
+      preLoaderRoute: typeof AdminIndexRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/account/': {
@@ -584,6 +598,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof DemoApiNamesRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/admin/tournaments/$tournamentId': {
+      id: '/admin/tournaments/$tournamentId'
+      path: '/admin/tournaments/$tournamentId'
+      fullPath: '/admin/tournaments/$tournamentId'
+      preLoaderRoute: typeof AdminTournamentsTournamentIdRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/_protected/auth/error': {
       id: '/_protected/auth/error'
       path: '/auth/error'
@@ -638,7 +659,6 @@ declare module '@tanstack/react-router' {
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
-  AdminRoute: AdminRoute,
   DemoClerkRoute: DemoClerkRoute,
   DemoDbChatRoute: DemoDbChatRoute,
   DemoDbChatApiRoute: DemoDbChatApiRoute,
@@ -647,6 +667,7 @@ const rootRouteChildren: RootRouteChildren = {
   DemoTanstackQueryRoute: DemoTanstackQueryRoute,
   TournamentsTournamentIdRoute: TournamentsTournamentIdRoute,
   AccountIndexRoute: AccountIndexRoute,
+  AdminIndexRoute: AdminIndexRoute,
   ForgotPasswordIndexRoute: ForgotPasswordIndexRoute,
   LoginIndexRoute: LoginIndexRoute,
   MatchupsIndexRoute: MatchupsIndexRoute,
@@ -657,6 +678,7 @@ const rootRouteChildren: RootRouteChildren = {
   ProtectedProtectedProtectedRoute: ProtectedProtectedProtectedRoute,
   ProtectedAuthConfirmRoute: ProtectedAuthConfirmRoute,
   ProtectedAuthErrorRoute: ProtectedAuthErrorRoute,
+  AdminTournamentsTournamentIdRoute: AdminTournamentsTournamentIdRoute,
   DemoApiNamesRoute: DemoApiNamesRoute,
   DemoApiTqTodosRoute: DemoApiTqTodosRoute,
   DemoFormAddressRoute: DemoFormAddressRoute,

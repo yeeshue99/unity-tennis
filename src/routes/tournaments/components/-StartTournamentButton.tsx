@@ -4,16 +4,18 @@ import { Matchup } from '@/db/players'
 import { activateNextRound, startTournament } from '@/db/tournaments'
 import { useCurrentUser } from '@/db/users'
 import { Button } from '@mui/material'
-import { useQuery } from '@tanstack/react-query'
+import { QueryClient, useQuery } from '@tanstack/react-query'
 
 interface StartTournamentButtonProps {
   tournamentId: number | null
   bracketId: number | null
+  queryClient: QueryClient
 }
 
 const StartTournamentButton: React.FC<StartTournamentButtonProps> = ({
   tournamentId,
   bracketId,
+  queryClient,
 }) => {
   const { data: hasMatchups = 0, refetch: refetchMatchups } = useQuery<
     number,
@@ -69,6 +71,9 @@ const StartTournamentButton: React.FC<StartTournamentButtonProps> = ({
     }
 
     await activateNextRound(tournamentId!, bracketId!)
+    queryClient.invalidateQueries({
+      queryKey: ['rounds', Number(bracketId)],
+    })
   }
 
   if (hasMatchups! <= 0 || status === MatchupStatus.PENDING) {

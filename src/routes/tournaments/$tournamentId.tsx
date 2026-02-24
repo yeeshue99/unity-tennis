@@ -1,9 +1,11 @@
 import { createFileRoute, useNavigate } from '@tanstack/react-router'
+import { useQueryClient } from '@tanstack/react-query'
 import TournamentDropdown from './components/-TournamentDropdown'
 import BracketDropdown from './components/-BracketDropdown'
 import BracketPlayersTable from './components/-BracketPlayersTable'
 import BracketMatchups from './components/-BracketMatchups'
 import StartTournamentButton from './components/-StartTournamentButton'
+import RoundDisplay from './components/-RoundDisplay'
 import { useCurrentUser } from '@/db/users'
 import Loader from '@/components/Loader'
 
@@ -27,6 +29,7 @@ function RouteComponent() {
   const { bracketId } = Route.useSearch()
   const navigate = useNavigate()
   const { isAdmin, isLoaded } = useCurrentUser()
+  const queryClient = useQueryClient()
 
   const changeTournament = (tournamentId: number | null) => {
     if (tournamentId) {
@@ -73,12 +76,25 @@ function RouteComponent() {
             onTournamentChange={changeTournament}
           />
         </div>
-        <div style={{ flex: 1 }}>
+        <div
+          style={{
+            flex: 1,
+            display: 'flex',
+            flexDirection: 'row',
+            gap: '1rem',
+          }}
+        >
           <BracketDropdown
             selectedTournament={Number(tournamentId) || null}
             selectedBracket={bracketId}
             onBracketChange={setSelectedBracket}
             disabled={false}
+            style={{ flex: 4 }}
+          />
+          <RoundDisplay
+            tournamentId={Number(tournamentId) || null}
+            bracketId={bracketId}
+            style={{ flex: 1 }}
           />
         </div>
       </div>
@@ -96,6 +112,7 @@ function RouteComponent() {
         <StartTournamentButton
           tournamentId={Number(tournamentId) || null}
           bracketId={bracketId}
+          queryClient={queryClient}
         />
       )}
     </div>

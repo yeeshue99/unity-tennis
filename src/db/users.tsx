@@ -1,7 +1,7 @@
-import { useEffect, useState } from 'react'
 import { createSupabaseClient } from './db'
-import { User, UserResponse } from '@supabase/supabase-js'
+import { User } from '@supabase/supabase-js'
 import { Player } from './players'
+import { useQuery } from '@tanstack/react-query'
 
 export async function registerUser(email: string, password: string) {
   const supabase = createSupabaseClient()
@@ -60,49 +60,31 @@ export const fetchUserData = async (supabaseId: string) => {
 }
 
 export function useCurrentUser() {
-  const [user, setUser] = useState<User | null>(null)
-  const [userData, setUserData] = useState<Player | null>(null)
-  const [isSignedIn, setIsSignedIn] = useState(false)
-  const [isLoaded, setIsLoaded] = useState(false)
-  const [loading, setLoading] = useState(true)
-  const [isAdmin, setIsAdmin] = useState(false)
-
-  useEffect(() => {
-    let cancelled = false
-
-    const fetchUser = async () => {
+  const { data: user = null, isLoading: userLoading } = useQuery<User | null>({
+    queryKey: ['authUser'],
+    queryFn: async () => {
       const supabase = createSupabaseClient()
       const {
         data: { user },
       } = await supabase.auth.getUser()
+      return (user as User | null) ?? null
+    },
+  })
 
-      if (cancelled) return
+  const { data: userData = null, isLoading: userDataLoading } =
+    useQuery<Player | null>({
+      queryKey: ['userData', user?.id],
+      queryFn: async () => {
+        if (!user?.id) return null
+        return fetchUserData(user.id)
+      },
+      enabled: !!user?.id,
+    })
 
-      try {
-        const userData = user ? await fetchUserData(user.id) : null
-
-        if (!cancelled) {
-          setUser(user as User | null)
-          setUserData(userData)
-          setIsSignedIn(!!user)
-          setIsAdmin(userData?.isAdmin || false)
-        }
-      } catch (error) {
-        console.error('Error fetching user data:', error)
-      } finally {
-        if (!cancelled) {
-          setLoading(false)
-          setIsLoaded(true)
-        }
-      }
-    }
-
-    fetchUser()
-
-    return () => {
-      cancelled = true
-    }
-  }, [])
+  const loading = userLoading || userDataLoading
+  const isLoaded = !loading
+  const isSignedIn = !!user
+  const isAdmin = userData?.isAdmin || false
 
   return { user, loading, isAdmin, isSignedIn, isLoaded, userData }
 }

@@ -14,6 +14,7 @@ interface BracketDropdownProps {
   selectedBracket: number | null
   onBracketChange: (bracketId: number | null) => void
   disabled: boolean
+  style?: React.CSSProperties
 }
 
 interface Bracket {
@@ -26,6 +27,7 @@ const BracketDropdown: React.FC<BracketDropdownProps> = ({
   selectedBracket,
   onBracketChange,
   disabled,
+  style,
 }) => {
   const {
     data: brackets = [],
@@ -64,7 +66,7 @@ const BracketDropdown: React.FC<BracketDropdownProps> = ({
       label="Select a Bracket"
       // @ts-expect-error TS2322: ThemedSelect onChange type doesn't match SelectChangeEvent<number|null>
       onChange={handleChange}
-      style={{ marginBottom: '1rem' }}
+      style={{ marginBottom: '1rem', ...style }}
     >
       <MenuItem value="">
         <em>-- Select --</em>

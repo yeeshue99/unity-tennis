@@ -70,9 +70,10 @@ function RouteComponent() {
   )
   const [selectedRound, setSelectedRound] = useState<number>(1)
 
-  const { data: matchups = [] as MatchupDetails[] } = useQuery<
-    MatchupDetails[]
-  >({
+  const {
+    data: matchups = [] as MatchupDetails[],
+    isLoading: matchupsLoading,
+  } = useQuery<MatchupDetails[]>({
     queryKey: [
       'matchups',
       isAdmin,
@@ -263,97 +264,102 @@ function RouteComponent() {
           ))}
         </ThemedSelect>
       </div>
-      <div
-        style={{
-          display: 'grid',
-          gridTemplateColumns: '1fr 1fr',
-          gap: '1rem',
-        }}
-      >
-        {matchups.map((matchup) => (
-          <div
-            key={matchup.id}
-            style={{
-              border: '1px solid var(--color-border)',
-              borderRadius: '8px',
-              padding: '1rem',
-              display: 'flex',
-              justifyContent: 'space-between',
-              backgroundColor: matchup.winner_id
-                ? 'color-mix(in srgb, var(--color-primary) 25%, var(--color-surface))'
-                : 'var(--color-surface)',
-            }}
-          >
-            <div>
-              <p>
-                <strong>Round:</strong> {matchup.round}
-              </p>
-              <p>
-                <strong>Status:</strong> {matchup.status}
-              </p>
-              <p>
-                <strong>Winner:</strong>{' '}
-                {matchup.winner_id &&
-                matchup.winner_id === matchup.player1_id &&
-                matchup.player1
-                  ? matchup.player1.name
-                  : matchup.winner_id === matchup.player2_id && matchup.player2
-                    ? matchup.player2.name
-                    : 'N/A'}
-              </p>
-              <p>
-                <strong>Score:</strong> {matchup.score || 'N/A'}
-              </p>
-              <p>
-                <strong>
-                  {matchup.player1Partner ? 'Team 1' : 'Player 1'}:
-                </strong>{' '}
-                {matchup.player1 ? `${matchup.player1.name}` : 'N/A'}
-              </p>
-              {matchup.player1Partner && (
-                <p>
-                  {matchup.player1Partner
-                    ? `${matchup.player1Partner.name}`
-                    : 'N/A'}
-                </p>
-              )}
-              <p>
-                <strong>
-                  {matchup.player2Partner ? 'Team 2' : 'Player 2'}:
-                </strong>{' '}
-                {matchup.player2 ? `${matchup.player2.name}` : 'N/A'}
-              </p>
-              {matchup.player2Partner && (
-                <p>
-                  {matchup.player2Partner
-                    ? `${matchup.player2Partner.name}`
-                    : 'N/A'}
-                </p>
-              )}
-            </div>
+      {matchupsLoading ? (
+        <Loader />
+      ) : (
+        <div
+          style={{
+            display: 'grid',
+            gridTemplateColumns: '1fr 1fr',
+            gap: '1rem',
+          }}
+        >
+          {matchups.map((matchup) => (
             <div
+              key={matchup.id}
               style={{
+                border: '1px solid var(--color-border)',
+                borderRadius: '8px',
+                padding: '1rem',
                 display: 'flex',
-                alignItems: 'center',
+                justifyContent: 'space-between',
+                backgroundColor: matchup.winner_id
+                  ? 'color-mix(in srgb, var(--color-primary) 25%, var(--color-surface))'
+                  : 'var(--color-surface)',
               }}
             >
-              <button
-                onClick={() => setScore(matchup.id)}
+              <div>
+                <p>
+                  <strong>Round:</strong> {matchup.round}
+                </p>
+                <p>
+                  <strong>Status:</strong> {matchup.status}
+                </p>
+                <p>
+                  <strong>Winner:</strong>{' '}
+                  {matchup.winner_id &&
+                  matchup.winner_id === matchup.player1_id &&
+                  matchup.player1
+                    ? matchup.player1.name
+                    : matchup.winner_id === matchup.player2_id &&
+                        matchup.player2
+                      ? matchup.player2.name
+                      : 'N/A'}
+                </p>
+                <p>
+                  <strong>Score:</strong> {matchup.score || 'N/A'}
+                </p>
+                <p>
+                  <strong>
+                    {matchup.player1Partner ? 'Team 1' : 'Player 1'}:
+                  </strong>{' '}
+                  {matchup.player1 ? `${matchup.player1.name}` : 'N/A'}
+                </p>
+                {matchup.player1Partner && (
+                  <p>
+                    {matchup.player1Partner
+                      ? `${matchup.player1Partner.name}`
+                      : 'N/A'}
+                  </p>
+                )}
+                <p>
+                  <strong>
+                    {matchup.player2Partner ? 'Team 2' : 'Player 2'}:
+                  </strong>{' '}
+                  {matchup.player2 ? `${matchup.player2.name}` : 'N/A'}
+                </p>
+                {matchup.player2Partner && (
+                  <p>
+                    {matchup.player2Partner
+                      ? `${matchup.player2Partner.name}`
+                      : 'N/A'}
+                  </p>
+                )}
+              </div>
+              <div
                 style={{
-                  padding: '0.5rem 1rem',
-                  backgroundColor: 'var(--color-primary)',
-                  color: 'white',
-                  border: 'none',
-                  borderRadius: '4px',
-                  cursor: 'pointer',
+                  display: 'flex',
+                  alignItems: 'center',
                 }}
               >
-                Set Score
-              </button>
+                <button
+                  onClick={() => setScore(matchup.id)}
+                  style={{
+                    padding: '0.5rem 1rem',
+                    backgroundColor: 'var(--color-primary)',
+                    color: 'white',
+                    border: 'none',
+                    borderRadius: '4px',
+                    cursor: 'pointer',
+                  }}
+                >
+                  Set Score
+                </button>
+              </div>
             </div>
-          </div>
-        ))}
-      </div>
+          ))}
+        </div>
+      )}
 
       <ScoreModal
         isOpen={isModalOpen}

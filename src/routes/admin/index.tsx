@@ -10,7 +10,6 @@ import Loader from '@/components/Loader'
 import { ThemedSelect } from '@/components/ThemedSelect'
 import { ThemedTextField } from '@/components/ThemedTextField'
 import {
-  Alert,
   Box,
   Button,
   Chip,
@@ -29,6 +28,7 @@ import {
   Typography,
 } from '@mui/material'
 import { useState } from 'react'
+import { useAlert } from '@/lib/alert-context'
 
 export const Route = createFileRoute('/admin/')({
   component: RouteComponent,
@@ -135,18 +135,19 @@ function TournamentsTab() {
 
 function CreateTournamentTab() {
   const queryClient = useQueryClient()
+  const { showAlert } = useAlert()
   const [name, setName] = useState('')
   const [format, setFormat] = useState('SINGLE_ELIMINATION')
-  const [success, setSuccess] = useState(false)
 
   const mutation = useMutation({
     mutationFn: () => createTournament(name.trim(), format),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['admin', 'tournaments'] })
       setName('')
-      setSuccess(true)
-      setTimeout(() => setSuccess(false), 3000)
+      showAlert('Tournament created!', 'success')
     },
+    onError: (e: Error) =>
+      showAlert(e.message, 'error', 'Failed to create tournament'),
   })
 
   return (
@@ -155,10 +156,6 @@ function CreateTournamentTab() {
         Create New Tournament
       </Typography>
       <Stack spacing={2} sx={{ maxWidth: 420 }}>
-        {success && <Alert severity="success">Tournament created!</Alert>}
-        {mutation.isError && (
-          <Alert severity="error">{(mutation.error as any)?.message}</Alert>
-        )}
         <ThemedTextField
           label="Tournament Name"
           value={name}
@@ -188,9 +185,9 @@ function CreateTournamentTab() {
 
 function CreateBracketTab() {
   const queryClient = useQueryClient()
+  const { showAlert } = useAlert()
   const [bracketName, setBracketName] = useState('')
   const [tournamentId, setTournamentId] = useState<number | ''>('')
-  const [success, setSuccess] = useState(false)
 
   const { data: tournaments = [] } = useQuery({
     queryKey: ['admin', 'tournaments'],
@@ -205,9 +202,10 @@ function CreateBracketTab() {
       })
       setBracketName('')
       setTournamentId('')
-      setSuccess(true)
-      setTimeout(() => setSuccess(false), 3000)
+      showAlert('Bracket created!', 'success')
     },
+    onError: (e: Error) =>
+      showAlert(e.message, 'error', 'Failed to create bracket'),
   })
 
   return (
@@ -216,10 +214,6 @@ function CreateBracketTab() {
         Create New Bracket
       </Typography>
       <Stack spacing={2} sx={{ maxWidth: 420 }}>
-        {success && <Alert severity="success">Bracket created!</Alert>}
-        {mutation.isError && (
-          <Alert severity="error">{(mutation.error as any)?.message}</Alert>
-        )}
         <ThemedSelect
           label="Tournament"
           value={tournamentId}
@@ -251,13 +245,13 @@ function CreateBracketTab() {
 
 function ManageUsersTab() {
   const queryClient = useQueryClient()
+  const { showAlert } = useAlert()
   const [showAddForm, setShowAddForm] = useState(false)
   const [newName, setNewName] = useState('')
   const [newEmail, setNewEmail] = useState('')
   const [newPassword, setNewPassword] = useState('')
   const [newGender, setNewGender] = useState('M')
   const [newPhone, setNewPhone] = useState('')
-  const [addSuccess, setAddSuccess] = useState(false)
 
   const { data: players = [], isLoading } = useQuery({
     queryKey: ['admin', 'players'],
@@ -272,8 +266,12 @@ function ManageUsersTab() {
       playerId: number
       isAdmin: boolean
     }) => updatePlayerAdminStatus(playerId, isAdmin),
-    onSuccess: () =>
-      queryClient.invalidateQueries({ queryKey: ['admin', 'players'] }),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['admin', 'players'] })
+      showAlert('Admin status updated', 'info')
+    },
+    onError: (e: Error) =>
+      showAlert(e.message, 'error', 'Failed to update admin status'),
   })
 
   const addUser = useMutation({
@@ -295,9 +293,10 @@ function ManageUsersTab() {
       setNewGender('M')
       setNewPhone('')
       setShowAddForm(false)
-      setAddSuccess(true)
-      setTimeout(() => setAddSuccess(false), 3000)
+      showAlert('User created successfully!', 'success')
     },
+    onError: (e: Error) =>
+      showAlert(e.message, 'error', 'Failed to create user'),
   })
 
   if (isLoading) return <Loader />
@@ -325,11 +324,7 @@ function ManageUsersTab() {
           <Typography variant="subtitle1" fontWeight="bold" gutterBottom>
             New User
           </Typography>
-          {addUser.isError && (
-            <Alert severity="error" sx={{ mb: 1 }}>
-              {(addUser.error as any)?.message}
-            </Alert>
-          )}
+
           <Stack spacing={2}>
             <Stack direction="row" spacing={2}>
               <ThemedTextField
@@ -394,12 +389,6 @@ function ManageUsersTab() {
           </Stack>
         </Paper>
       </Collapse>
-
-      {addSuccess && (
-        <Alert severity="success" sx={{ mb: 2 }}>
-          User created successfully!
-        </Alert>
-      )}
 
       <Paper variant="outlined">
         <Table size="small">

@@ -14,6 +14,7 @@ import DeleteIcon from '@mui/icons-material/Delete'
 import { useNavigate } from '@tanstack/react-router'
 import { useCurrentUser } from '@/db/users'
 import Loader from '@/components/Loader'
+import { useAlert } from '@/lib/alert-context'
 
 interface BracketPlayersTableProps {
   tournamentId: number | null
@@ -27,6 +28,7 @@ const BracketPlayersTable: React.FC<BracketPlayersTableProps> = ({
   const queryClient = useQueryClient()
   const { isSignedIn, user, isAdmin, isLoaded } = useCurrentUser()
   const navigate = useNavigate()
+  const { showAlert } = useAlert()
 
   const { data: allPlayers = [] } = useQuery<Player[]>({
     queryKey: ['allPlayers', isAdmin],
@@ -79,7 +81,7 @@ const BracketPlayersTable: React.FC<BracketPlayersTableProps> = ({
 
   const [selectedPlayer, setSelectedPlayer] = useState<Player | null>(null)
 
-  const addPlayerMutation = useMutation<void, Error, { playerId: number }>({
+  const addPlayerMutation = useMutation<void, Error, { playerId: number }>{
     mutationFn: async ({ playerId }: { playerId: number }) => {
       const response = await addPlayerToBracket(playerId, bracketId!)
     },
@@ -88,7 +90,9 @@ const BracketPlayersTable: React.FC<BracketPlayersTableProps> = ({
         queryKey: ['bracketPlayers', isAdmin!, allPlayers.length, bracketId],
       })
       setSelectedPlayer(null)
+      showAlert('Player added to bracket', 'success')
     },
+    onError: (e: Error) => showAlert(e.message, 'error', 'Failed to add player'),
   })
 
   const removePlayerMutation = useMutation<void, Error, { playerId: number }>({
@@ -100,7 +104,9 @@ const BracketPlayersTable: React.FC<BracketPlayersTableProps> = ({
         queryKey: ['bracketPlayers', isAdmin!, allPlayers.length, bracketId],
       })
       setSelectedPlayer(null)
+      showAlert('Player removed from bracket', 'info')
     },
+    onError: (e: Error) => showAlert(e.message, 'error', 'Failed to remove player'),
   })
   const isLoading = addPlayerMutation.status === 'pending'
 

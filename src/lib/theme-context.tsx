@@ -22,8 +22,8 @@ export const STORAGE_KEY = 'unity-tennis-theme'
 
 export function ThemeProvider({ children }: { children: ReactNode }) {
   const [theme, setThemeState] = useState<ThemeName>(() => {
-    if (typeof window === 'undefined') return 'dark'
-    return (localStorage.getItem(STORAGE_KEY) as ThemeName) ?? 'dark'
+    if (typeof window === 'undefined') return 'default'
+    return (localStorage.getItem(STORAGE_KEY) as ThemeName) ?? 'default'
   })
 
   const setTheme = (t: ThemeName) => {

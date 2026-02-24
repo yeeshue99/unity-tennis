@@ -18,6 +18,7 @@ import {
   generateMatchups,
 } from '@/db/matchups'
 import { Link } from '@tanstack/react-router'
+import { useAlert } from '@/lib/alert-context'
 
 interface BracketMatchupsProps {
   tournamentId: number | null
@@ -50,6 +51,7 @@ const BracketMatchups: React.FC<BracketMatchupsProps> = ({
 }) => {
   const queryClient = useQueryClient()
   const [format, setFormat] = useState('ROUND_ROBIN')
+  const { showAlert } = useAlert()
 
   const handleFormatChange = (event: SelectChangeEvent) => {
     setFormat(event.target.value)
@@ -89,7 +91,10 @@ const BracketMatchups: React.FC<BracketMatchupsProps> = ({
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['matchups', bracketId] })
       refetch()
+      showAlert('Matchups generated successfully', 'success')
     },
+    onError: (e: Error) =>
+      showAlert(e.message, 'error', 'Failed to generate matchups'),
   })
 
   const updateMatchupMutation = useMutation<

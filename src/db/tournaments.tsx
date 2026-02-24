@@ -110,6 +110,54 @@ export const activateNextRound = async (
   return response.data
 }
 
+export const resetTournament = async (tournament_id: number) => {
+  const supabase = createSupabaseClient()
+
+  // Reset tournament to PENDING
+  const tournamentResponse = await supabase
+    .from('tournaments')
+    .update({
+      status: MatchupStatus.PENDING,
+      current_round: 1,
+      start_date: null,
+    })
+    .eq('id', tournament_id)
+    .select('id')
+
+  if (!tournamentResponse.status || tournamentResponse.error) {
+    throw new Error('Failed to reset tournament')
+  }
+
+  // Reset all brackets for this tournament to PENDING
+  const bracketsResponse = await supabase
+    .from('brackets')
+    .update({ status: MatchupStatus.PENDING })
+    .eq('tournament_id', tournament_id)
+    .select('id')
+
+  if (!bracketsResponse.status || bracketsResponse.error) {
+    throw new Error('Failed to reset brackets')
+  }
+
+  const bracketIds = (bracketsResponse.data ?? []).map(
+    (b: { id: number }) => b.id,
+  )
+
+  if (bracketIds.length > 0) {
+    // Reset all matchups for these brackets to PENDING, clear winner/score
+    const matchupsResponse = await supabase
+      .from('matchups')
+      .update({ status: MatchupStatus.PENDING, winner_id: null, score: null })
+      .in('bracket_id', bracketIds)
+
+    if (!matchupsResponse.status || matchupsResponse.error) {
+      throw new Error('Failed to reset matchups')
+    }
+  }
+
+  return true
+}
+
 export const updateMatchupsForCurrentRound = async (
   bracket_id: number,
   current_round: number,

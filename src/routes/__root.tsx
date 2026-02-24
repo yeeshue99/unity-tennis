@@ -15,6 +15,8 @@ import TanStackQueryDevtools from '../integrations/tanstack-query/devtools'
 import StoreDevtools from '../lib/demo-store-devtools'
 
 import ClerkProvider from '../integrations/clerk/provider'
+import { AlertProvider } from '../lib/alert-context'
+import AlertStack from '../components/AlertStack'
 
 import appCss from '../styles.css?url'
 
@@ -58,23 +60,26 @@ function RootDocument({ children }: { children: React.ReactNode }) {
       </head>
       <body>
         <ClerkProvider>
-          <ThemeProvider>
-            <Header />
-            {children}
-            <TanStackDevtools
-              config={{
-                position: 'bottom-right',
-              }}
-              plugins={[
-                {
-                  name: 'Tanstack Router',
-                  render: <TanStackRouterDevtoolsPanel />,
-                },
-                TanStackQueryDevtools,
-                StoreDevtools,
-              ]}
-            />
-          </ThemeProvider>
+          <AlertProvider>
+            <ThemeProvider>
+              <Header />
+              {children}
+              <AlertStack />
+              <TanStackDevtools
+                config={{
+                  position: 'bottom-right',
+                }}
+                plugins={[
+                  {
+                    name: 'Tanstack Router',
+                    render: <TanStackRouterDevtoolsPanel />,
+                  },
+                  TanStackQueryDevtools,
+                  StoreDevtools,
+                ]}
+              />
+            </ThemeProvider>
+          </AlertProvider>
         </ClerkProvider>
         <Scripts />
       </body>

@@ -2,7 +2,6 @@ import { createFileRoute, Link } from '@tanstack/react-router'
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import { useNavigate } from '@tanstack/react-router'
 import {
-  Alert,
   Box,
   Button,
   Chip,
@@ -25,6 +24,7 @@ import DeleteIcon from '@mui/icons-material/Delete'
 import ArrowBackIcon from '@mui/icons-material/ArrowBack'
 import { useState } from 'react'
 import { fetchBracketsForTournament, createBracket } from '@/db/brackets'
+import { useAlert } from '@/lib/alert-context'
 import {
   fetchAllPlayers,
   fetchAllPlayersInBracket,
@@ -66,7 +66,7 @@ function RouteComponent() {
   const [selectedPlayer, setSelectedPlayer] = useState<Player | null>(null)
   const [showNewBracket, setShowNewBracket] = useState(false)
   const [newBracketName, setNewBracketName] = useState('')
-  const [newBracketSuccess, setNewBracketSuccess] = useState(false)
+  const { showAlert } = useAlert()
 
   // Fetch tournament info
   const { data: tournaments = [] } = useQuery({
@@ -125,10 +125,11 @@ function RouteComponent() {
       })
       setNewBracketName('')
       setShowNewBracket(false)
-      setNewBracketSuccess(true)
-      setTimeout(() => setNewBracketSuccess(false), 3000)
+      showAlert('Bracket created!', 'success')
       if (data?.id) handleBracketChange(data.id)
     },
+    onError: (e: Error) =>
+      showAlert(e.message, 'error', 'Failed to create bracket'),
   })
 
   const addPlayerMutation = useMutation({
@@ -139,16 +140,23 @@ function RouteComponent() {
         queryKey: ['bracketPlayers', selectedBracketId],
       })
       setSelectedPlayer(null)
+      showAlert('Player added to bracket', 'success')
     },
+    onError: (e: Error) =>
+      showAlert(e.message, 'error', 'Failed to add player'),
   })
 
   const removePlayerMutation = useMutation({
     mutationFn: (playerId: number) =>
       removePlayerFromBracket(playerId, selectedBracketId!),
-    onSuccess: () =>
+    onSuccess: () => {
       queryClient.invalidateQueries({
         queryKey: ['bracketPlayers', selectedBracketId],
-      }),
+      })
+      showAlert('Player removed from bracket', 'info')
+    },
+    onError: (e: Error) =>
+      showAlert(e.message, 'error', 'Failed to remove player'),
   })
 
   const togglePaidMutation = useMutation({
@@ -163,6 +171,8 @@ function RouteComponent() {
       queryClient.invalidateQueries({
         queryKey: ['bracketPlayers', selectedBracketId],
       }),
+    onError: (e: Error) =>
+      showAlert(e.message, 'error', 'Failed to update payment status'),
   })
 
   const handleBracketChange = (id: number | null) => {
@@ -262,19 +272,8 @@ function RouteComponent() {
               {createBracketMutation.isPending ? 'Creating…' : 'Create'}
             </Button>
           </Stack>
-          {createBracketMutation.isError && (
-            <Alert severity="error" sx={{ mt: 1 }}>
-              {(createBracketMutation.error as any)?.message}
-            </Alert>
-          )}
         </Paper>
       </Collapse>
-
-      {newBracketSuccess && (
-        <Alert severity="success" sx={{ mb: 2, maxWidth: 420 }}>
-          Bracket created!
-        </Alert>
-      )}
 
       {selectedBracketId && (
         <>
@@ -411,11 +410,6 @@ function RouteComponent() {
                 Add
               </Button>
             </Stack>
-            {addPlayerMutation.isError && (
-              <Alert severity="error" sx={{ mt: 1 }}>
-                {(addPlayerMutation.error as any)?.message}
-              </Alert>
-            )}
           </Paper>
         </>
       )}

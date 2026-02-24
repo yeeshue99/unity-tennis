@@ -4,7 +4,6 @@ import { createSupabaseClient } from '@/db/db'
 import Loader from '@/components/Loader'
 import type { User } from '@supabase/supabase-js'
 import {
-  Alert,
   Box,
   Button,
   Card,
@@ -15,6 +14,7 @@ import {
   Typography,
 } from '@mui/material'
 import { useState } from 'react'
+import { useAlert } from '@/lib/alert-context'
 
 export const Route = createFileRoute('/account/')({
   component: AccountPage,
@@ -24,13 +24,12 @@ function AccountPage() {
   const { isSignedIn, isLoaded, user, userData } = useCurrentUser()
   const authUser = user as unknown as User | null
   const navigate = useNavigate()
+  const { showAlert } = useAlert()
 
   const [currentPassword, setCurrentPassword] = useState('')
   const [newPassword, setNewPassword] = useState('')
   const [confirmPassword, setConfirmPassword] = useState('')
   const [isLoading, setIsLoading] = useState(false)
-  const [error, setError] = useState<string | null>(null)
-  const [success, setSuccess] = useState(false)
 
   if (!isLoaded) return <Loader />
 
@@ -41,15 +40,13 @@ function AccountPage() {
 
   const handleChangePassword = async (e: React.FormEvent) => {
     e.preventDefault()
-    setError(null)
-    setSuccess(false)
 
     if (newPassword !== confirmPassword) {
-      setError('New passwords do not match.')
+      showAlert('New passwords do not match.', 'warning')
       return
     }
     if (newPassword.length < 6) {
-      setError('Password must be at least 6 characters.')
+      showAlert('Password must be at least 6 characters.', 'warning')
       return
     }
 
@@ -69,12 +66,16 @@ function AccountPage() {
       })
       if (updateError) throw updateError
 
-      setSuccess(true)
+      showAlert('Password updated successfully!', 'success', 'Done')
       setCurrentPassword('')
       setNewPassword('')
       setConfirmPassword('')
     } catch (err: unknown) {
-      setError(err instanceof Error ? err.message : 'An error occurred.')
+      showAlert(
+        err instanceof Error ? err.message : 'An error occurred.',
+        'error',
+        'Password update failed',
+      )
     } finally {
       setIsLoading(false)
     }
@@ -114,10 +115,6 @@ function AccountPage() {
           <Divider sx={{ mb: 2 }} />
           <form onSubmit={handleChangePassword}>
             <Stack spacing={2}>
-              {success && (
-                <Alert severity="success">Password updated successfully!</Alert>
-              )}
-              {error && <Alert severity="error">{error}</Alert>}
               <TextField
                 label="Current Password"
                 type="password"

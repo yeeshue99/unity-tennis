@@ -5,6 +5,7 @@ import { activateNextRound, startTournament } from '@/db/tournaments'
 import { useCurrentUser } from '@/db/users'
 import { Button } from '@mui/material'
 import { QueryClient, useQuery } from '@tanstack/react-query'
+import { useAlert } from '@/lib/alert-context'
 
 interface StartTournamentButtonProps {
   tournamentId: number | null
@@ -54,26 +55,39 @@ const StartTournamentButton: React.FC<StartTournamentButtonProps> = ({
     },
   })
 
+  const { showAlert } = useAlert()
+
   const handleStartTournament = async () => {
-    if (!bracketId) {
-      throw new Error('Invalid bracket ID')
+    if (!bracketId) return
+    try {
+      await startTournament(tournamentId!, bracketId!)
+      showAlert('Tournament started!', 'success')
+      refetchMatchups()
+      refetchStatus()
+    } catch (e: unknown) {
+      showAlert(
+        e instanceof Error ? e.message : 'Failed to start tournament',
+        'error',
+        'Error',
+      )
     }
-
-    await startTournament(tournamentId!, bracketId!)
-
-    refetchMatchups()
-    refetchStatus()
   }
 
   const handleStartNextRound = async () => {
-    if (!bracketId) {
-      throw new Error('Invalid bracket ID')
+    if (!bracketId) return
+    try {
+      await activateNextRound(tournamentId!, bracketId!)
+      showAlert('Next round started!', 'success')
+      queryClient.invalidateQueries({
+        queryKey: ['rounds', Number(bracketId)],
+      })
+    } catch (e: unknown) {
+      showAlert(
+        e instanceof Error ? e.message : 'Failed to start next round',
+        'error',
+        'Error',
+      )
     }
-
-    await activateNextRound(tournamentId!, bracketId!)
-    queryClient.invalidateQueries({
-      queryKey: ['rounds', Number(bracketId)],
-    })
   }
 
   if (hasMatchups! <= 0 || status === MatchupStatus.PENDING) {

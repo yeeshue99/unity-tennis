@@ -5,7 +5,9 @@ import BracketDropdown from './components/-BracketDropdown'
 import BracketPlayersTable from './components/-BracketPlayersTable'
 import BracketMatchups from './components/-BracketMatchups'
 import StartTournamentButton from './components/-StartTournamentButton'
+import RestartTournamentButton from './components/-RestartTournamentButton'
 import RoundDisplay from './components/-RoundDisplay'
+import AvailableRoundsDisplay from './components/-AvailableRoundsDisplay'
 import { useCurrentUser } from '@/db/users'
 import Loader from '@/components/Loader'
 
@@ -96,6 +98,11 @@ function RouteComponent() {
             bracketId={bracketId}
             style={{ flex: 1 }}
           />
+          <AvailableRoundsDisplay
+            tournamentId={Number(tournamentId) || null}
+            bracketId={bracketId}
+            style={{ flex: 1 }}
+          />
         </div>
       </div>
       <BracketPlayersTable
@@ -110,6 +117,13 @@ function RouteComponent() {
       )}
       {isAdmin && (
         <StartTournamentButton
+          tournamentId={Number(tournamentId) || null}
+          bracketId={bracketId}
+          queryClient={queryClient}
+        />
+      )}
+      {isAdmin && (
+        <RestartTournamentButton
           tournamentId={Number(tournamentId) || null}
           bracketId={bracketId}
           queryClient={queryClient}

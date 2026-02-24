@@ -18,6 +18,7 @@ import { Select, MenuItem, InputLabel } from '@mui/material'
 import { useCurrentUser } from '@/db/users'
 import Loader from '@/components/Loader'
 import { ThemedSelect } from '@/components/ThemedSelect'
+import { useAlert } from '@/lib/alert-context'
 
 type MATCHUP_SEARCH_PARAMS = {
   tournamentId: number | null
@@ -144,18 +145,23 @@ function RouteComponent() {
     setSelectedMatchup(null)
   }
 
-  const handleSaveScore = async (score: string, winnerId?: number) => {
-    console.log('Saving score:', {
-      score,
-      winnerId,
-      matchupId: selectedMatchup?.id,
-    })
-    updateMatchup(
-      selectedMatchup!.id,
-      winnerId ?? selectedMatchup!.winner_id!,
-      score,
-    )
+  const { showAlert } = useAlert()
 
+  const handleSaveScore = async (score: string, winnerId?: number) => {
+    try {
+      await updateMatchup(
+        selectedMatchup!.id,
+        winnerId ?? selectedMatchup!.winner_id!,
+        score,
+      )
+      showAlert('Score saved', 'success')
+    } catch (e: unknown) {
+      showAlert(
+        e instanceof Error ? e.message : 'Failed to save score',
+        'error',
+        'Error',
+      )
+    }
     closeModal()
   }
 

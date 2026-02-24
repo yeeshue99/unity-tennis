@@ -1,5 +1,6 @@
 import React, { useState } from 'react'
 import HorizontalRuleOutlinedIcon from '@mui/icons-material/HorizontalRuleOutlined'
+import { useAlert } from '@/lib/alert-context'
 
 interface ScoreModalProps {
   isOpen: boolean
@@ -17,6 +18,7 @@ const ScoreModal: React.FC<ScoreModalProps> = ({
   if (!isOpen || !selectedMatchup) return null
 
   const [selectedWinner, setSelectedWinner] = useState<number | null>(null)
+  const { showAlert } = useAlert()
 
   const getPlayerId = (side: 'player1' | 'player2') =>
     selectedMatchup?.[`${side}_id`] ?? selectedMatchup?.[side]?.id
@@ -32,7 +34,7 @@ const ScoreModal: React.FC<ScoreModalProps> = ({
 
   const handleSave = () => {
     if (!selectedWinner) {
-      alert('Please select a winner before saving the score.')
+      showAlert('Please select a winner before saving the score.', 'warning')
       return
     }
 

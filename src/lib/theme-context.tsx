@@ -6,7 +6,13 @@ import {
   type ReactNode,
 } from 'react'
 
-export type ThemeName = 'default' | 'dark' | 'light' | 'clay' | 'grass' | 'hard'
+export type ThemeName =
+  | 'tennis-ball'
+  | 'dark'
+  | 'light'
+  | 'clay'
+  | 'grass'
+  | 'hard'
 
 interface ThemeContextValue {
   theme: ThemeName
@@ -14,7 +20,7 @@ interface ThemeContextValue {
 }
 
 const ThemeContext = createContext<ThemeContextValue>({
-  theme: 'default',
+  theme: 'hard',
   setTheme: () => {},
 })
 
@@ -22,8 +28,8 @@ export const STORAGE_KEY = 'unity-tennis-theme'
 
 export function ThemeProvider({ children }: { children: ReactNode }) {
   const [theme, setThemeState] = useState<ThemeName>(() => {
-    if (typeof window === 'undefined') return 'default'
-    return (localStorage.getItem(STORAGE_KEY) as ThemeName) ?? 'default'
+    if (typeof window === 'undefined') return 'hard'
+    return (localStorage.getItem(STORAGE_KEY) as ThemeName) ?? 'hard'
   })
 
   const setTheme = (t: ThemeName) => {
@@ -50,9 +56,9 @@ export function ThemeProvider({ children }: { children: ReactNode }) {
 export const useTheme = () => useContext(ThemeContext)
 
 export const THEMES: { name: ThemeName; label: string; swatch: string }[] = [
-  { name: 'default', label: 'Default', swatch: '#c6ed2c' },
   { name: 'hard', label: 'Hard', swatch: '#336699' },
   { name: 'clay', label: 'Clay', swatch: '#993300' },
   { name: 'grass', label: 'Grass', swatch: '#339966' },
+  { name: 'tennis-ball', label: 'Tennis Ball', swatch: '#c6ed2c' },
   { name: 'dark', label: 'Dark', swatch: '#1f2937' },
 ]

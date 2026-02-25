@@ -56,7 +56,7 @@ const AvailableRoundsDisplay: React.FC<AvailableRoundsDisplayProps> = ({
         gap: '1px',
         cursor: 'default',
         boxShadow: '0 1px 4px rgba(0,0,0,0.06)',
-        minWidth: '130px',
+        minWidth: '160px',
         ...style,
       }}
     >

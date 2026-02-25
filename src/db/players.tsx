@@ -199,38 +199,38 @@ export const fetchMatchupsForBracket = async (
   const supabase = createSupabaseClient()
   const bracketStatus = await getBracketStatus(bracketId)
 
-  if (bracketStatus === 'PENDING') {
-    const response = await supabase
-      .from('matchups')
-      .select(
-        'id, player1_id, player2_id, player1_partner_id, player2_partner_id, winner_id, bracket_id, score, status, round',
-      )
-      .eq('bracket_id', bracketId)
-      .eq('round', round)
-      .order('status', { ascending: true })
+  // if (bracketStatus === 'PENDING') {
+  const response = await supabase
+    .from('matchups')
+    .select(
+      'id, player1_id, player2_id, player1_partner_id, player2_partner_id, winner_id, bracket_id, score, status, round',
+    )
+    .eq('bracket_id', bracketId)
+    .eq('round', round)
+    .order('status', { ascending: true })
 
-    if (!response.status || response.error) {
-      throw new Error('Network response was not ok')
-    }
-
-    return response.data
-  } else {
-    const response = await supabase
-      .from('matchups')
-      .select(
-        'id, player1_id, player2_id, player1_partner_id, player2_partner_id, winner_id, bracket_id, score, status, round',
-      )
-      .eq('bracket_id', bracketId)
-      .eq('round', round)
-      .in('status', [MatchupStatus.IN_PROGRESS, MatchupStatus.COMPLETED])
-      .order('status', { ascending: true })
-
-    if (!response.status || response.error) {
-      throw new Error('Network response was not ok')
-    }
-
-    return response.data
+  if (!response.status || response.error) {
+    throw new Error('Network response was not ok')
   }
+
+  return response.data
+  // } else {
+  //   const response = await supabase
+  //     .from('matchups')
+  //     .select(
+  //       'id, player1_id, player2_id, player1_partner_id, player2_partner_id, winner_id, bracket_id, score, status, round',
+  //     )
+  //     .eq('bracket_id', bracketId)
+  //     .eq('round', round)
+  //     .in('status', [MatchupStatus.IN_PROGRESS, MatchupStatus.COMPLETED])
+  //     .order('status', { ascending: true })
+
+  //   if (!response.status || response.error) {
+  //     throw new Error('Network response was not ok')
+  //   }
+
+  //   return response.data
+  // }
 }
 
 export const updateBracketPlayerPaid = async (

@@ -1,5 +1,4 @@
 import { createSupabaseClient } from '@/db/db'
-import { getBracketStatus } from './brackets'
 
 export enum MatchupStatus {
   PENDING = 'PENDING',
@@ -74,29 +73,33 @@ export const generateMatchups = async (bracket_id: number, format: string) => {
 
 export const getRoundsForBracket = async (bracket_id: number) => {
   const supabase = createSupabaseClient()
-  const bracketStatus = await getBracketStatus(bracket_id)
 
-  if (bracketStatus === 'PENDING') {
-    const response = await supabase.rpc('get_unique_rounds_all', {
-      p_bracket_id: bracket_id,
-    })
+  const response = await supabase.rpc('get_unique_rounds_all', {
+    p_bracket_id: bracket_id,
+  })
 
-    if (!response.status || response.error) {
-      throw new Error('Network response was not ok')
-    }
-
-    return response.data || []
-  } else {
-    const response = await supabase.rpc('get_unique_rounds', {
-      p_bracket_id: bracket_id,
-    })
-
-    if (!response.status || response.error) {
-      throw new Error('Network response was not ok')
-    }
-
-    console.log(response.data)
-
-    return response.data || []
+  if (!response.status || response.error) {
+    throw new Error('Network response was not ok')
   }
+
+  return response.data || []
+}
+
+export const getAvailableRoundsForBracket = async (bracket_id: number) => {
+  const supabase = createSupabaseClient()
+  const response = await supabase
+    .from('matchups')
+    .select('round')
+    .eq('bracket_id', bracket_id)
+    .in('status', [MatchupStatus.IN_PROGRESS, MatchupStatus.COMPLETED])
+
+  if (!response.status || response.error) {
+    throw new Error('Network response was not ok')
+  }
+
+  const uniqueRounds = [
+    ...new Set((response.data || []).map((m: { round: number }) => m.round)),
+  ].sort((a, b) => a - b)
+
+  return uniqueRounds as number[]
 }

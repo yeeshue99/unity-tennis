@@ -1,7 +1,7 @@
 import React, { useState } from 'react'
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
-import { Autocomplete, Button, TextField } from '@mui/material'
-import { DataGrid, GridApi, GridColDef, GridKeyValue } from '@mui/x-data-grid'
+import { Autocomplete, Button, TextField, Tooltip } from '@mui/material'
+import { DataGrid, GridColDef } from '@mui/x-data-grid'
 import {
   addPlayerToBracket,
   fetchAllPlayers,
@@ -15,6 +15,8 @@ import { useNavigate } from '@tanstack/react-router'
 import { useCurrentUser } from '@/db/users'
 import Loader from '@/components/Loader'
 import { useAlert } from '@/lib/alert-context'
+import { getBracketStatus } from '@/db/brackets'
+import { MatchupStatus } from '@/db/matchups'
 
 interface BracketPlayersTableProps {
   tournamentId: number | null
@@ -81,18 +83,37 @@ const BracketPlayersTable: React.FC<BracketPlayersTableProps> = ({
 
   const [selectedPlayer, setSelectedPlayer] = useState<Player | null>(null)
 
-  const addPlayerMutation = useMutation<void, Error, { playerId: number }>{
+  const { data: bracketStatus } = useQuery<string>({
+    queryKey: ['bracketStatus', bracketId],
+    queryFn: async () => {
+      if (!bracketId) return MatchupStatus.PENDING
+      return (await getBracketStatus(bracketId)) as unknown as string
+    },
+    enabled: !!bracketId,
+  })
+
+  const isTournamentStarted =
+    bracketStatus !== undefined && bracketStatus !== MatchupStatus.PENDING
+
+  const addPlayerMutation = useMutation<void, Error, { playerId: number }>({
     mutationFn: async ({ playerId }: { playerId: number }) => {
-      const response = await addPlayerToBracket(playerId, bracketId!)
+      await addPlayerToBracket(playerId, bracketId!)
     },
     onSuccess: () => {
       queryClient.invalidateQueries({
         queryKey: ['bracketPlayers', isAdmin!, allPlayers.length, bracketId],
       })
+      queryClient.invalidateQueries({
+        queryKey: ['rounds', bracketId],
+      })
+      queryClient.invalidateQueries({
+        queryKey: ['availableRounds', bracketId],
+      })
       setSelectedPlayer(null)
       showAlert('Player added to bracket', 'success')
     },
-    onError: (e: Error) => showAlert(e.message, 'error', 'Failed to add player'),
+    onError: (e: Error) =>
+      showAlert(e.message, 'error', 'Failed to add player'),
   })
 
   const removePlayerMutation = useMutation<void, Error, { playerId: number }>({
@@ -106,7 +127,8 @@ const BracketPlayersTable: React.FC<BracketPlayersTableProps> = ({
       setSelectedPlayer(null)
       showAlert('Player removed from bracket', 'info')
     },
-    onError: (e: Error) => showAlert(e.message, 'error', 'Failed to remove player'),
+    onError: (e: Error) =>
+      showAlert(e.message, 'error', 'Failed to remove player'),
   })
   const isLoading = addPlayerMutation.status === 'pending'
 
@@ -167,12 +189,12 @@ const BracketPlayersTable: React.FC<BracketPlayersTableProps> = ({
       const onClick = async (e: { stopPropagation: () => void }) => {
         e.stopPropagation() // don't select this row after clicking
 
-        const api: GridApi = params.api
-        const thisRow: Record<string, GridKeyValue> = {}
         const thisPlayer = params.row as BracketPlayer
-        console.log('Attempting to remove player:', thisPlayer)
         if (!isAdmin) {
-          alert('You must be an admin to remove players from the bracket.')
+          showAlert(
+            'You must be an admin to remove players from the bracket.',
+            'warning',
+          )
           return
         }
 
@@ -265,16 +287,31 @@ const BracketPlayersTable: React.FC<BracketPlayersTableProps> = ({
       </div>
 
       {!isAdmin && isSignedIn && user && !!tournamentId && !!bracketId && (
-        <Button
-          variant="contained"
-          color="secondary"
-          onClick={handleAddSelf}
-          style={{ flex: 1, width: '60%', margin: '0 auto' }}
+        <Tooltip
+          title={
+            isTournamentStarted &&
+            !playersInBracket.some((p) => p.supabase_id === user.id)
+              ? 'Registration is closed — the tournament has already started'
+              : ''
+          }
         >
-          {playersInBracket.some((p) => p.supabase_id === user.id)
-            ? 'Remove yourself from this bracket'
-            : 'Sign up for this bracket'}
-        </Button>
+          <span style={{ width: '60%', margin: '0 auto' }}>
+            <Button
+              variant="contained"
+              color="secondary"
+              onClick={handleAddSelf}
+              style={{ flex: 1, width: '100%' }}
+              disabled={
+                isTournamentStarted &&
+                !playersInBracket.some((p) => p.supabase_id === user.id)
+              }
+            >
+              {playersInBracket.some((p) => p.supabase_id === user.id)
+                ? 'Remove yourself from this bracket'
+                : 'Sign up for this bracket'}
+            </Button>
+          </span>
+        </Tooltip>
       )}
 
       {isAdmin && (

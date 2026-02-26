@@ -13,7 +13,7 @@ export const Route = createFileRoute('/tournaments/')({
 })
 
 type FORMAT = 'ROUND_ROBIN' | 'COMPASS' | 'SWISS'
-type STATUS = 'PLANNING' | 'ONGOING' | 'COMPLETED'
+type STATUS = 'PLANNING' | 'ONGOING' | 'COMPLETED' | 'CANCELED' | 'DISABLED'
 
 type Tournament = {
   id: number

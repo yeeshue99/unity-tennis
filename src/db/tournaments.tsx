@@ -22,7 +22,6 @@ export const fetchTournaments = async () => {
     .select('id, name, status, current_round, start_date, end_date, format')
     .neq('status', 'DISABLED') // Exclude disabled tournaments from the list
     .neq('status', 'CANCELED') // Exclude canceled tournaments from the list
-    .order('created_at', { ascending: false })
 
   if (!response.status || response.error) {
     throw new Error('Network response was not ok')
